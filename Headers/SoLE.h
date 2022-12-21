@@ -35,7 +35,7 @@ class SoLE {
 
  private:
   std::vector<LE> system_;
-  size_t based_cnt_, unknown_cnt;
+  size_t based_cnt_, unknown_cnt_;
   std::vector<bool> is_based_;
   bool has_solution_;
 
