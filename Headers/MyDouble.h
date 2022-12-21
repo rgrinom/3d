@@ -4,10 +4,10 @@
 #include <iostream>
 
 struct MyDouble {
-  static const double kEps = 0.000001;
+  static constexpr double kEps = 0.000001;
   double value;
 
-  MyDouble(double value);
+  MyDouble(double value = 0.0);
 
   MyDouble& operator+=(const MyDouble& rhs);
   MyDouble& operator-=(const MyDouble& rhs);
