@@ -77,7 +77,7 @@ MyDouble LE::operator[](size_t ind) const {
 //-------------------------------Constructors--------------------------------
 SoLE::SoLE(std::vector<LE> system)
     : system_(system), based_cnt_(0), unknown_cnt(system_[0].Size()),
-      is_based(system_.size()) {}
+      is_based(system_[0].Size()) {}
 
 std::vector<MyDouble> SoLE::Solve() {
   Gauss();
@@ -94,27 +94,40 @@ std::vector<MyDouble> SoLE::Solve() {
   return ans;
 }
 
+bool SoLE::HasSolution() { return has_solution_; }
+
 void SoLE::Gauss() {
-  for (size_t cur_unknown = 0; cur_unknown < std::min(unknown_cnt, system_.size()); ++cur_unknown) {
+  for (size_t cur_unknown = 0; cur_unknown < unknown_cnt; ++cur_unknown) {
     for (size_t cur_equation = based_cnt_; cur_equation < system_.size();
          ++cur_equation) {
-      if (system_[cur_equation][based_cnt_] != 0) {
+      if (system_[cur_equation][cur_unknown] != 0) {
         std::swap(system_[cur_equation], system_[based_cnt_]);
         break;
       }
     }
-    if (system_[based_cnt_][based_cnt_] == 0) {
+    if (system_[based_cnt_][cur_unknown] == 0) {
       continue;
     }
-    system_[based_cnt_] /= system_[based_cnt_][based_cnt_];
+    system_[based_cnt_] /= system_[based_cnt_][cur_unknown];
     for (size_t cur_equation = 0; cur_equation < system_.size();
          ++cur_equation) {
       if (cur_equation == based_cnt_) {
         continue;
       }
-      system_[cur_equation] -= system_[based_cnt_] * system_[cur_equation][based_cnt_];
+      system_[cur_equation] -= system_[based_cnt_] * system_[cur_equation][cur_unknown];
     }
     is_based[based_cnt_] = true;
     ++based_cnt_;
+    if (based_cnt_ == system_.size()) {
+      break;
+    }
+  }
+  has_solution_ = true;
+  for (size_t cur_equation = based_cnt_; cur_equation < system_.size();
+       ++cur_equation) {
+    if (system_[cur_equation][unknown_cnt] != 0) {
+      has_solution_ = false;
+      break;
+    }
   }
 }

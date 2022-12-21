@@ -31,11 +31,13 @@ class SoLE {
  public:
   SoLE(std::vector<LE> system);
   std::vector<MyDouble> Solve();
+  bool HasSolution();
 
  private:
   std::vector<LE> system_;
   size_t based_cnt_, unknown_cnt;
   std::vector<bool> is_based;
+  bool has_solution_;
 
   void Gauss();
 };
