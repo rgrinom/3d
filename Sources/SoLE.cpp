@@ -85,7 +85,7 @@ std::vector<MyDouble> SoLE::Solve() {
   size_t cur_equation = based_cnt_ - 1;
   for (size_t cur_unknown_ = unknown_cnt; cur_unknown_ > 0; --cur_unknown_) {
     size_t cur_unknown = cur_unknown_ - 1;
-    if (!is_based[cur_unknown]) {
+    if (!is_based_[cur_unknown]) {
       continue;
     }
     ans[cur_unknown] = system_[cur_equation][unknown_cnt];
@@ -116,7 +116,7 @@ void SoLE::Gauss() {
       }
       system_[cur_equation] -= system_[based_cnt_] * system_[cur_equation][cur_unknown];
     }
-    is_based[based_cnt_] = true;
+    is_based_[based_cnt_] = true;
     ++based_cnt_;
     if (based_cnt_ == system_.size()) {
       break;
