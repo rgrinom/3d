@@ -9,6 +9,8 @@ struct MyDouble {
 
   MyDouble(double value = 0.0);
 
+  MyDouble operator-();
+
   MyDouble& operator+=(const MyDouble& rhs);
   MyDouble& operator-=(const MyDouble& rhs);
   MyDouble& operator*=(const MyDouble& rhs);

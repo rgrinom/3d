@@ -41,6 +41,7 @@ Point& Point::operator/=(const MyDouble& rhs) {
   x /= rhs;
   y /= rhs;
   z /= rhs;
+  return *this;
 }
 
 Point operator+(const Point& lhs, const Point& rhs) {
@@ -67,6 +68,16 @@ Point operator/(const Point& lhs, const MyDouble& rhs) {
   return ret;
 }
 
+std::istream& operator>>(std::istream& in, Point& p) {
+  in >> p.x >> p.y >> p.z;
+  return in;
+}
+
+std::ostream& operator<<(std::ostream& out, const Point& p) {
+  out << p.x << " " << p.y << " " << p.z;
+  return out;
+}
+
 //---------------------------------Qualities---------------------------------
 MyDouble Point::Length() const {
   return MyDouble(std::sqrt((x * x + y * y + z * z).value));
@@ -77,11 +88,7 @@ MyDouble Distance(const Point& lhs, const Point& rhs) {
 }
 
 MyDouble DotProduct(const Point& lhs, const Point& rhs) {
-  MyDouble a = lhs.Length();
-  MyDouble b = rhs.Length();
-  MyDouble c = (rhs - lhs).Length();
-  MyDouble cos = (a * a + b * b - c * c) / (2 * a * b);
-  return a * b * cos; 
+  return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 Point CrossProduct(const Point& lhs, const Point& rhs) {

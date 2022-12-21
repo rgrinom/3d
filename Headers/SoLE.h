@@ -10,8 +10,8 @@ class LE {
 
   LE& operator+=(const LE& rhs);
   LE& operator-=(const LE& rhs);
-  LE& operator*=(const MyDouble& rhs);
-  LE& operator/=(const MyDouble& rhs);
+  LE& operator*=(MyDouble rhs);
+  LE& operator/=(MyDouble rhs);
 
   size_t Size();
   MyDouble& operator[](size_t ind);
@@ -24,8 +24,8 @@ class LE {
 
 LE operator+(const LE& lhs, const LE& rhs);
 LE operator-(const LE& lhs, const LE& rhs);
-LE operator*(const LE& lhs, const MyDouble& rhs);
-LE operator/(const LE& lhs, const MyDouble& rhs);
+LE operator*(const LE& lhs, MyDouble rhs);
+LE operator/(const LE& lhs, MyDouble rhs);
 
 class SoLE {
  public:
