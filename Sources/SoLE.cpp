@@ -77,7 +77,7 @@ MyDouble LE::operator[](size_t ind) const {
 //-------------------------------Constructors--------------------------------
 SoLE::SoLE(std::vector<LE> system)
     : system_(system), based_cnt_(0), unknown_cnt(system_[0].Size()),
-      is_based(system_[0].Size()) {}
+      is_based_(system_[0].Size()) {}
 
 std::vector<MyDouble> SoLE::Solve() {
   Gauss();

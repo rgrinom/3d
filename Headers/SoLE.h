@@ -36,7 +36,7 @@ class SoLE {
  private:
   std::vector<LE> system_;
   size_t based_cnt_, unknown_cnt;
-  std::vector<bool> is_based;
+  std::vector<bool> is_based_;
   bool has_solution_;
 
   void Gauss();
