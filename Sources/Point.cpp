@@ -1,5 +1,10 @@
 #include "../Headers/Point.h"
 
+//------------------------------Constructors----------------------------------
+Point::Point(MyDouble x, MyDouble y, MyDouble z): x(x), y(y), z(z) {}
+Point::Point(std::vector<MyDouble> parameters)
+    : x(parameters[0]), y(parameters[1]), z(parameters[2]) {}
+
 //-------------------------------Compares-------------------------------------
 bool operator==(const Point& lhs, const Point& rhs) {
   return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);
@@ -68,6 +73,8 @@ Point operator/(const Point& lhs, const MyDouble& rhs) {
   return ret;
 }
 
+//---------------------------------i/o-stream--------------------------------
+
 std::istream& operator>>(std::istream& in, Point& p) {
   in >> p.x >> p.y >> p.z;
   return in;
@@ -83,8 +90,8 @@ MyDouble Point::Length() const {
   return MyDouble(std::sqrt((x * x + y * y + z * z).value));
 }
 
-MyDouble Distance(const Point& lhs, const Point& rhs) {
-  return (rhs - lhs).Length();
+MyDouble Point::Distance(const Point& rhs) const {
+  return (*this - rhs).Length();
 }
 
 MyDouble DotProduct(const Point& lhs, const Point& rhs) {

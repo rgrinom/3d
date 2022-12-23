@@ -19,6 +19,10 @@ MyDouble Plane::Distance(const Point& p) const {
 
 bool Plane::Contains(const Point& p) const { return  Distance(p) == 0; }
 
-Point Plane::Normal() const { return {a_, b_, c_}; }
+Point Plane::Normal() const {
+  Point ret(a_, b_, c_);
+  ret.Normalize();
+  return ret;
+}
 
 std::vector<MyDouble> Plane::GetParameters() const { return {a_, b_, c_, d_}; }

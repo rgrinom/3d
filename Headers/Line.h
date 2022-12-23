@@ -10,8 +10,11 @@ class Line {
   Line() = default;
   Line(const Point& p1, const Point& p2);
   Line(const Plane& pl1, const Plane& pl2);
-  bool Contains(const Point& p);
+  bool Contains(const Point& p) const;
   std::pair<Plane, Plane> GetParameters() const;
+  Point Collinear() const;
+  Point Normal(const Point& p) const;
+  MyDouble Distance(const Point& p) const;
 
  private:
   Plane pl1_, pl2_;
@@ -26,3 +29,13 @@ Line Intersection(const Plane& pl1, const Plane& pl2);
 Point Intersection(const Plane& pl, const Line& l);
 Point Intersection(const Line& l, const Plane& pl);
 Point Intersection(const Line& l1, const Line& l2);
+
+//------------------------------------Scales----------------------------------
+Point Scale(const Point& p1, const Point& p2, const MyDouble& k);
+Point Scale(const Point& p, const Plane& pl, const MyDouble& k);
+Point Scale(const Point& p, const Line& l, const MyDouble& k);
+
+//-----------------------------------Reflections------------------------------
+Point Reflect(const Point& p1, const Point& p2);
+Point Reflect(const Point& p, const Plane& pl);
+Point Reflect(const Point& p, const Line& l);
