@@ -18,25 +18,23 @@ class Segment {
 
 class Polygon {
  public:
-  std::vector<Point> points;
-
   Polygon(const std::vector<Point>& points);
   bool Contains(const Point& p) const;
+  Point operator[](size_t ind) const;
+  Point& operator[](size_t ind);
+
+  Point Intersection(const Line& l) const;
+
+  Polygon& Scale(const Point& center, const MyDouble& k);
+  Polygon& Scale(const Plane& pl, const MyDouble& k);
+  Polygon& Scale(const Line& axis, const MyDouble& k);
+
+  Polygon& Reflect(const Point& center);
+  Polygon& Reflect(const Plane& pl);
+  Polygon& Reflect(const Line& axis);
+
+  Polygon& Rotate(const Line& axis, const MyDouble& deg);
+
+ private:
+  std::vector<Point> points;
 };
-
-//---------------------------------Intersections-----------------------------
-Point Intersection(const Polygon& poly, const Line& l);
-Point Intersection(const Line& l, const Polygon& poly);
-
-//------------------------------------Scales----------------------------------
-Polygon& Scale(Polygon& poly, const Point& center, const MyDouble& k);
-Polygon& Scale(Polygon& poly, const Plane& pl, const MyDouble& k);
-Polygon& Scale(Polygon& poly, const Line& axis, const MyDouble& k);
-
-//-----------------------------------Reflections------------------------------
-Polygon& Reflect(Polygon& poly, const Point& center);
-Polygon& Reflect(Polygon& poly, const Plane& pl);
-Polygon& Reflect(Polygon& poly, const Line& axis);
-
-//------------------------------------Rotations-------------------------------
-Polygon& Rotate(Polygon& poly, const Line& axis, const MyDouble& deg);

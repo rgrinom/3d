@@ -5,9 +5,16 @@
 
 #include "MyDouble.h"
 
+class Line;
+class Plane;
+
 namespace constants {
   const MyDouble kInf(1000000000);
+  const MyDouble kPi(3.14159265359);
 }
+
+MyDouble DegToRad(MyDouble deg);
+MyDouble RadToDeg(MyDouble rad);
 
 struct Point {
   MyDouble x, y, z;
@@ -25,6 +32,16 @@ struct Point {
 
   MyDouble Length() const;
   MyDouble Distance(const Point& rhs) const;
+
+  Point& Scale(const Point& center, const MyDouble& k);
+  Point& Scale(const Line& axis, const MyDouble& k);
+  Point& Scale(const Plane& pl, const MyDouble& k);
+
+  Point& Reflect(const Point& center);
+  Point& Reflect(const Plane& pl);
+  Point& Reflect(const Line& axis);
+
+  Point& Rotate(const Line& axis, const MyDouble& deg);
 };
 
 bool operator==(const Point& lhs, const Point& rhs);

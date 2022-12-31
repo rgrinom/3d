@@ -56,7 +56,7 @@ bool Polygon::Contains(const Point& p) const {
     size_t next_point_ind = (cur_point_ind + 1) % points.size();
     const Point& cur_point = points[cur_point_ind];
     const Point& next_point = points[next_point_ind];
-    Point intersection = Intersection(l, Line(cur_point, next_point));
+    Point intersection = l.Intersection(Line(cur_point, next_point));
     if (Segment(cur_point, next_point).Contains(intersection) &&
         intersection < p) {
       ++intersections_cnt;
@@ -66,49 +66,5 @@ bool Polygon::Contains(const Point& p) const {
   return intersections_cnt % 2 == 1;
 }
 
-//---------------------------------Intersections-----------------------------
-Point Intersection(const Polygon& poly, const Line& l) {
-  Plane pl(poly.points[0], poly.points[1], poly.points[2]);
-  Point intersection = Intersection(pl, l);
-  return (poly.Contains(intersection) ?
-      intersection : Point(constants::kInf, constants::kInf, constants::kInf));
-}
-
-Point Intersection(const Line& l, const Polygon& poly) {
-  return Intersection(poly, l);
-}
-
-//------------------------------------Scales----------------------------------
-Polygon& Scale(Polygon& poly, const Point& center, const MyDouble& k) {
-  for (size_t i = 0; i < poly.points.size(); ++i) {
-    Scale(poly.points[i], center, k);
-  }
-  return poly;
-}
-
-Polygon& Scale(Polygon& poly, const Plane& pl, const MyDouble& k) {
-  for (size_t i = 0; i < poly.points.size(); ++i) {
-    Scale(poly.points[i], pl, k);
-  }
-  return poly;
-}
-
-Polygon& Scale(Polygon& poly, const Line& axis, const MyDouble& k) {
-  for (size_t i = 0; i < poly.points.size(); ++i) {
-    Scale(poly.points[i], axis, k);
-  }
-  return poly;
-}
-
-//-----------------------------------Reflections------------------------------
-Polygon& Reflect(Polygon& poly, const Point& center) { return Scale(poly, center, -1); }
-Polygon& Reflect(Polygon& poly, const Plane& pl) { return Scale(poly, pl, -1); }
-Polygon& Reflect(Polygon& poly, const Line& axis) { return Scale(poly, axis, -1); }
-
-//------------------------------------Rotations-------------------------------
-Polygon& Rotate(Polygon& poly, const Line& axis, const MyDouble& deg) {
-  for (size_t i = 0; i < poly.points.size(); ++i) {
-    Rotate(poly.points[i], axis, deg);
-  }
-  return poly;
-}
+Point Polygon::operator[](size_t ind) const { return points[ind]; }
+Point& Polygon::operator[](size_t ind) {return points[ind]; }
