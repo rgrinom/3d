@@ -12,6 +12,16 @@ bool operator==(const Point& lhs, const Point& rhs) {
 
 bool operator!=(const Point& lhs, const Point& rhs) { return !(lhs == rhs); }
 
+bool operator<(const Point& lhs, const Point& rhs) {
+  if (lhs.x != rhs.x) {
+    return lhs.x < rhs.x;
+  }
+  if (lhs.y != rhs.y) {
+    return lhs.y < rhs.y;
+  }
+  return lhs.z < rhs.z;
+}
+
 //------------------------------Arithmetics-----------------------------------
 Point Point::operator-() const {
   Point ret = *this;
@@ -19,7 +29,10 @@ Point Point::operator-() const {
   return ret;
 }
 
-void Point::Normalize() { *this /= (*this).Length(); }
+Point& Point::Normalize() {
+  *this /= (*this).Length();
+  return *this;
+}
 
 Point& Point::operator+=(const Point& rhs) {
   x += rhs.x;

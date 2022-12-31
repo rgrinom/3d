@@ -6,7 +6,7 @@ Plane::Plane(const Point& p1, const Point& p2, const Point& p3) {
   system.push_back(LE({p2.x, p2.y, p2.z, 1}, 0));
   system.push_back(LE({p3.x, p3.y, p3.z, 1}, 0));
   SoLE sole(system);
-  std::vector<MyDouble> coefficients = sole.Solve();
+  std::vector<MyDouble> coefficients = sole.Solution();
   a_ = coefficients[0];
   b_ = coefficients[1];
   c_ = coefficients[2];
@@ -21,8 +21,7 @@ bool Plane::Contains(const Point& p) const { return  Distance(p) == 0; }
 
 Point Plane::Normal() const {
   Point ret(a_, b_, c_);
-  ret.Normalize();
-  return ret;
+  return ret.Normalize();
 }
 
 std::vector<MyDouble> Plane::GetParameters() const { return {a_, b_, c_, d_}; }

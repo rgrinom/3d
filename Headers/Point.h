@@ -16,7 +16,7 @@ struct Point {
   Point(std::vector<MyDouble> parameters);
 
   Point operator-() const;
-  void Normalize();
+  Point& Normalize();
 
   Point& operator+=(const Point& rhs);
   Point& operator-=(const Point& rhs);
@@ -29,6 +29,7 @@ struct Point {
 
 bool operator==(const Point& lhs, const Point& rhs);
 bool operator!=(const Point& lhs, const Point& rhs);
+bool operator<(const Point& lhs, const Point& rhs);
 
 Point operator+(const Point& lhs, const Point& rhs);
 Point operator-(const Point& lhs, const Point& rhs);

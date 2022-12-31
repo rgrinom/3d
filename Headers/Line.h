@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <cmath>
 
 #include "Point.h"
 #include "Plane.h"
@@ -31,11 +32,20 @@ Point Intersection(const Line& l, const Plane& pl);
 Point Intersection(const Line& l1, const Line& l2);
 
 //------------------------------------Scales----------------------------------
-Point Scale(const Point& p1, const Point& p2, const MyDouble& k);
-Point Scale(const Point& p, const Plane& pl, const MyDouble& k);
-Point Scale(const Point& p, const Line& l, const MyDouble& k);
+void Scale(Point& p, const Point& center, const MyDouble& k);
+void Scale(Point& p, const Plane& pl, const MyDouble& k);
+void Scale(Point& p, const Line& axis, const MyDouble& k);
 
 //-----------------------------------Reflections------------------------------
-Point Reflect(const Point& p1, const Point& p2);
-Point Reflect(const Point& p, const Plane& pl);
-Point Reflect(const Point& p, const Line& l);
+void Reflect(Point& p, const Point& center);
+void Reflect(Point& p, const Plane& pl);
+void Reflect(Point& p, const Line& axis);
+
+//------------------------------------Rotations-------------------------------
+namespace constants {
+  const MyDouble kPi(3.14159265359);
+}
+
+MyDouble DegToRad(MyDouble deg);
+MyDouble RadToDeg(MyDouble rad);
+void Rotate(Point& p, const Line& axis, const MyDouble& deg);

@@ -2,7 +2,7 @@
 
 std::random_device Line::rd_;
 std::mt19937 Line::gen_ = std::mt19937(rd_());
-std::uniform_int_distribution<> Line::distr_ = std::uniform_int_distribution<>(1, 10);
+std::uniform_int_distribution<> Line::distr_ = std::uniform_int_distribution<>(-10000, 10000);
 
 Line::Line(const Point& p1, const Point& p2) {
   Point p(distr_(gen_), distr_(gen_), distr_(gen_));
@@ -32,8 +32,8 @@ Point Line::Collinear() const {
   parameters = pl2_.GetParameters();
   system.push_back(LE({parameters[0], parameters[1], parameters[2]}, 0));
   SoLE sole(system);
-  std::vector<MyDouble> ans = sole.Solve();
-  return Point(ans[0], ans[1], ans[2]);
+  std::vector<MyDouble> ans = sole.Solution();
+  return Point(ans[0], ans[1], ans[2]).Normalize();
 }
 
 Point Line::Normal(const Point& p) const {
@@ -43,14 +43,19 @@ Point Line::Normal(const Point& p) const {
   parameters = pl2_.GetParameters();
   system.push_back(LE({parameters[0], parameters[1], parameters[2]}, -parameters[3]));
   SoLE sole(system);
-  parameters = sole.Solve();
+  parameters = sole.Solution();
   Point p1(parameters[0], parameters[1], parameters[2]);
   Point a = Collinear();
   Point p2 = p1 + a;
   Plane pl1(p1, p2, p);
   Point pl1_normal = pl1.Normal();
   Plane pl2(p1, p2, p1 + pl1_normal);
-  return pl2.Normal();
+  Point ret = pl2.Normal();
+  if ((pl2.Distance(p) >= 0 && pl2.Distance(ret) <= 0) ||
+      (pl2.Distance(p) <= 0 && pl2.Distance(ret) >= 0)) {
+    ret *= -1;
+  }
+  return ret;
 }
 
 MyDouble Line::Distance(const Point& p) const {
@@ -76,7 +81,7 @@ Point Intersection(const Plane& pl, const Line& l) {
   parameters = l.GetParameters().second.GetParameters();
   system.push_back(LE({parameters[0], parameters[1], parameters[2]}, -parameters[3]));
   SoLE sole(system);
-  parameters = sole.Solve();
+  parameters = sole.Solution();
   if (!sole.HasSolution()) {
     return Point(constants::kInf, constants::kInf, constants::kInf);
   }
@@ -99,7 +104,7 @@ Point Intersection(const Line& l1, const Line& l2) {
   parameters = l2.GetParameters().second.GetParameters();
   system.push_back(LE({parameters[0], parameters[1], parameters[2]}, -parameters[3]));
   SoLE sole(system);
-  parameters = sole.Solve();
+  parameters = sole.Solution();
   if (!sole.HasSolution()) {
     return Point(constants::kInf, constants::kInf, constants::kInf);
   }
@@ -107,31 +112,49 @@ Point Intersection(const Line& l1, const Line& l2) {
 }
 
 //---------------------------------Scales-------------------------------------
-Point Scale(const Point& p1, const Point& p2, const MyDouble& k) {
-  Point ret = p2;
-  ret += (p1 - p2) * k;
-  return ret;
+void Scale(Point& p, const Point& center, const MyDouble& k) {
+  p = center + (p - center) * k;
 }
 
-Point Scale(const Point& p, const Plane& pl, const MyDouble& k) {
+void Scale(Point& p, const Plane& pl, const MyDouble& k) {
   Point height = pl.Normal() * pl.Distance(p);
   if (!pl.Contains(p + height)) {
     height *= -1;
   }
-  Point ret = (p + height) - height * k;
-  return ret;
+  p = (p + height) - height * k;
 }
 
-Point Scale(const Point& p, const Line& l, const MyDouble& k) {
-  Point height = l.Normal(p) * l.Distance(p);
-  if (!l.Contains(p + height)) {
-    height *= -1;
-  }
-  Point ret = (p + height) - height * k;
-  return ret;
+void Scale(Point& p, const Line& axis, const MyDouble& k) {
+  Point height = -axis.Normal(p) * axis.Distance(p);
+  p = (p + height) - height * k;
 }
 
 //--------------------------------Reflects------------------------------------
-Point Reflect(const Point& p1, const Point& p2) { return Scale(p1, p2, -1); }
-Point Reflect(const Point& p, const Plane& pl) { return Scale(p, pl, -1); }
-Point Reflect(const Point& p, const Line& l) { return Scale(p, l, -1); }
+void Reflect(Point& p, const Point& center) { Scale(p, center, -1); }
+void Reflect(Point& p, const Plane& pl) { Scale(p, pl, -1); }
+void Reflect(Point& p, const Line& axis) { Scale(p, axis, -1); }
+
+//------------------------------------Rotations-------------------------------
+MyDouble DegToRad(MyDouble deg) { return deg * constants::kPi / 180.0; }
+MyDouble RadToDeg(MyDouble rad) { return rad * 180.0 / constants::kPi; }
+
+void Rotate(Point& p, const Line& axis, const MyDouble& deg) {
+  MyDouble angle = DegToRad(deg);
+  Point e3 = axis.Collinear();
+  Point e1 = axis.Normal(p);
+  Point e2 = CrossProduct(e3, e1);
+
+  MyDouble normalLength = axis.Distance(p);
+
+  MyDouble x1 = normalLength * std::cos(angle.value);
+  MyDouble y1 = normalLength * std::sin(angle.value);
+
+  MyDouble x = e1.x * x1 + e2.x * y1;
+  MyDouble y = e1.y * x1 + e2.y * y1;
+  MyDouble z = e1.z * x1 + e2.z * y1;
+
+  Point newNormal(x, y, z);
+  Point proection = p - (e1 * normalLength);
+
+  p = proection + newNormal;
+}

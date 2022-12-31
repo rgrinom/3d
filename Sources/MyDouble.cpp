@@ -13,7 +13,7 @@ bool operator!=(const MyDouble& lhs, const MyDouble& rhs) {
 }
 
 bool operator<(const MyDouble& lhs, const MyDouble& rhs) {
-  return (lhs != rhs) && std::fabs(rhs.value - lhs.value) > 0;
+  return (lhs != rhs) && (rhs.value - lhs.value > 0);
 }
 
 bool operator>(const MyDouble& lhs, const MyDouble& rhs) {
