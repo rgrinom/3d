@@ -22,7 +22,7 @@ LE& LE::operator-=(const LE& rhs) {
   return *this;
 }
 
-LE& LE::operator*=(const MyDouble& rhs) {
+LE& LE::operator*=(MyDouble rhs) {
   for (size_t i = 0; i < values_.size(); ++i) {
     values_[i] *= rhs;
   }
@@ -30,7 +30,7 @@ LE& LE::operator*=(const MyDouble& rhs) {
   return *this;
 }
 
-LE& LE::operator/=(const MyDouble& rhs) {
+LE& LE::operator/=(MyDouble rhs) {
   for (size_t i = 0; i < values_.size(); ++i) {
     values_[i] /= rhs;
   }
@@ -50,13 +50,13 @@ LE operator-(const LE& lhs, const LE& rhs) {
   return ret;
 }
 
-LE operator*(const LE& lhs, const MyDouble& rhs) {
+LE operator*(const LE& lhs, MyDouble rhs) {
   LE ret = lhs;
   ret *= rhs;
   return ret;
 }
 
-LE operator/(const LE& lhs, const MyDouble& rhs) {
+LE operator/(const LE& lhs, MyDouble rhs) {
   LE ret = lhs;
   ret /= rhs;
   return ret;
@@ -74,21 +74,54 @@ MyDouble LE::operator[](size_t ind) const {
 }
 
 //----------------------------------SoLE-------------------------------------
+std::random_device SoLE::rd_;
+std::mt19937 SoLE::gen_ = std::mt19937(rd_());
+std::uniform_int_distribution<> SoLE::distr_ = std::uniform_int_distribution<>(-10000, 10000);
+
 //-------------------------------Constructors--------------------------------
 SoLE::SoLE(std::vector<LE> system)
     : system_(system), based_cnt_(0), unknown_cnt_(system_[0].Size()),
-      is_based_(system_[0].Size()) {}
-
-std::vector<MyDouble> SoLE::Solve() {
+      is_based_(system_[0].Size()) {
   Gauss();
+}
+
+std::vector<MyDouble> SoLE::Solution() {
   std::vector<MyDouble> ans(unknown_cnt_);
   size_t cur_equation = based_cnt_ - 1;
+  size_t not_based_ind = unknown_cnt_;
+
   for (size_t cur_unknown_ = unknown_cnt_; cur_unknown_ > 0; --cur_unknown_) {
     size_t cur_unknown = cur_unknown_ - 1;
     if (!is_based_[cur_unknown]) {
+      if (not_based_ind == unknown_cnt_) {
+        ans[cur_unknown] = 1;
+        not_based_ind = cur_unknown;
+      }
       continue;
     }
     ans[cur_unknown] = system_[cur_equation][unknown_cnt_];
+    if (not_based_ind != unknown_cnt_) {
+      ans[cur_unknown] -= system_[cur_equation][not_based_ind];
+    }
+    --cur_equation;
+  }
+  return ans;
+}
+
+std::vector<MyDouble> SoLE::RandomSolution() {
+  std::vector<MyDouble> ans(unknown_cnt_);
+  size_t cur_equation = based_cnt_ - 1;
+
+  for (size_t cur_unknown_ = unknown_cnt_; cur_unknown_ > 0; --cur_unknown_) {
+    size_t cur_unknown = cur_unknown_ - 1;
+    if (!is_based_[cur_unknown]) {
+      ans[cur_unknown] = distr_(gen_);
+      continue;
+    }
+    ans[cur_unknown] = system_[cur_equation][unknown_cnt_];
+    for (size_t i = cur_unknown + 1; i < unknown_cnt_; ++i) {
+      ans[cur_unknown] -= ans[i] * system_[cur_equation][i];
+    }
     --cur_equation;
   }
   return ans;
@@ -116,7 +149,7 @@ void SoLE::Gauss() {
       }
       system_[cur_equation] -= system_[based_cnt_] * system_[cur_equation][cur_unknown];
     }
-    is_based_[based_cnt_] = true;
+    is_based_[cur_unknown] = true;
     ++based_cnt_;
     if (based_cnt_ == system_.size()) {
       break;

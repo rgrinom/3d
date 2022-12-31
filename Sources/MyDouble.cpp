@@ -13,7 +13,7 @@ bool operator!=(const MyDouble& lhs, const MyDouble& rhs) {
 }
 
 bool operator<(const MyDouble& lhs, const MyDouble& rhs) {
-  return (lhs != rhs) && std::fabs(rhs.value - lhs.value) > 0;
+  return (lhs != rhs) && (rhs.value - lhs.value > 0);
 }
 
 bool operator>(const MyDouble& lhs, const MyDouble& rhs) {
@@ -29,6 +29,12 @@ bool operator>=(const MyDouble& lhs, const MyDouble& rhs) {
 }
 
 //-------------------------------Arithmetics---------------------------------
+MyDouble MyDouble::operator-() {
+  MyDouble ret = *this;
+  ret *= -1;
+  return ret;
+}
+
 MyDouble& MyDouble::operator+=(const MyDouble& rhs) {
   value += rhs.value;
   return *this;
