@@ -50,7 +50,7 @@ Point Line::Intersection(const Line& l) const {
 }
 
 Point Polygon::Intersection(const Line& l) const {
-  Plane pl(points[0], points[1], points[2]);
+  Plane pl(points_[0], points_[1], points_[2]);
   Point intersection = pl.Intersection(l);
   return (Contains(intersection) ?
       intersection : Point(constants::kInf, constants::kInf, constants::kInf));
@@ -81,35 +81,10 @@ Point& Point::Scale(const Line& axis, const MyDouble& k) {
   return (*this);
 }
 
-Polygon& Polygon::Scale(const Point& center, const MyDouble& k) {
-  for (size_t i = 0; i < points.size(); ++i) {
-    points[i].Scale(center, k);
-  }
-  return *this;
-}
-
-Polygon& Polygon::Scale(const Plane& pl, const MyDouble& k) {
-  for (size_t i = 0; i < points.size(); ++i) {
-    points[i].Scale(pl, k);
-  }
-  return *this;
-}
-
-Polygon& Polygon::Scale(const Line& axis, const MyDouble& k) {
-  for (size_t i = 0; i < points.size(); ++i) {
-    points[i].Scale(axis, k);
-  }
-  return *this;
-}
-
 //--------------------------------Reflects------------------------------------
 Point& Point::Reflect(const Point& center) { return Scale(center, -1); }
 Point& Point::Reflect(const Plane& pl) { return Scale(pl, -1); }
 Point& Point::Reflect(const Line& axis) { return Scale(axis, -1); }
-
-Polygon& Polygon::Reflect(const Point& center) { return Scale(center, -1); }
-Polygon& Polygon::Reflect(const Plane& pl) { return Scale(pl, -1); }
-Polygon& Polygon::Reflect(const Line& axis) { return Scale(axis, -1); }
 
 //------------------------------------Rotations-------------------------------
 MyDouble DegToRad(MyDouble deg) { return deg * constants::kPi / 180.0; }
@@ -134,12 +109,5 @@ Point& Point::Rotate(const Line& axis, const MyDouble& deg) {
   Point proection = *this - (e1 * normalLength);
 
   *this = proection + newNormal;
-  return *this;
-}
-
-Polygon& Polygon::Rotate(const Line& axis, const MyDouble& deg) {
-  for (size_t i = 0; i < points.size(); ++i) {
-    points[i].Rotate(axis, deg);
-  }
   return *this;
 }

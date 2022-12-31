@@ -25,6 +25,9 @@ class Polygon {
 
   Point Intersection(const Line& l) const;
 
+  Polygon& operator+=(const Point& p);
+  Polygon& operator-=(const Point& p);
+
   Polygon& Scale(const Point& center, const MyDouble& k);
   Polygon& Scale(const Plane& pl, const MyDouble& k);
   Polygon& Scale(const Line& axis, const MyDouble& k);
@@ -36,5 +39,5 @@ class Polygon {
   Polygon& Rotate(const Line& axis, const MyDouble& deg);
 
  private:
-  std::vector<Point> points;
+  std::vector<Point> points_;
 };
