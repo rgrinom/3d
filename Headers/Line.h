@@ -32,14 +32,14 @@ Point Intersection(const Line& l, const Plane& pl);
 Point Intersection(const Line& l1, const Line& l2);
 
 //------------------------------------Scales----------------------------------
-void Scale(Point& p, const Point& center, const MyDouble& k);
-void Scale(Point& p, const Plane& pl, const MyDouble& k);
-void Scale(Point& p, const Line& axis, const MyDouble& k);
+Point& Scale(Point& p, const Point& center, const MyDouble& k);
+Point& Scale(Point& p, const Plane& pl, const MyDouble& k);
+Point& Scale(Point& p, const Line& axis, const MyDouble& k);
 
 //-----------------------------------Reflections------------------------------
-void Reflect(Point& p, const Point& center);
-void Reflect(Point& p, const Plane& pl);
-void Reflect(Point& p, const Line& axis);
+Point& Reflect(Point& p, const Point& center);
+Point& Reflect(Point& p, const Plane& pl);
+Point& Reflect(Point& p, const Line& axis);
 
 //------------------------------------Rotations-------------------------------
 namespace constants {
@@ -48,4 +48,4 @@ namespace constants {
 
 MyDouble DegToRad(MyDouble deg);
 MyDouble RadToDeg(MyDouble rad);
-void Rotate(Point& p, const Line& axis, const MyDouble& deg);
+Point& Rotate(Point& p, const Line& axis, const MyDouble& deg);

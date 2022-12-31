@@ -112,33 +112,36 @@ Point Intersection(const Line& l1, const Line& l2) {
 }
 
 //---------------------------------Scales-------------------------------------
-void Scale(Point& p, const Point& center, const MyDouble& k) {
+Point& Scale(Point& p, const Point& center, const MyDouble& k) {
   p = center + (p - center) * k;
+  return p;
 }
 
-void Scale(Point& p, const Plane& pl, const MyDouble& k) {
+Point& Scale(Point& p, const Plane& pl, const MyDouble& k) {
   Point height = pl.Normal() * pl.Distance(p);
   if (!pl.Contains(p + height)) {
     height *= -1;
   }
   p = (p + height) - height * k;
+  return p;
 }
 
-void Scale(Point& p, const Line& axis, const MyDouble& k) {
+Point& Scale(Point& p, const Line& axis, const MyDouble& k) {
   Point height = -axis.Normal(p) * axis.Distance(p);
   p = (p + height) - height * k;
+  return p;
 }
 
 //--------------------------------Reflects------------------------------------
-void Reflect(Point& p, const Point& center) { Scale(p, center, -1); }
-void Reflect(Point& p, const Plane& pl) { Scale(p, pl, -1); }
-void Reflect(Point& p, const Line& axis) { Scale(p, axis, -1); }
+Point& Reflect(Point& p, const Point& center) { return Scale(p, center, -1); }
+Point& Reflect(Point& p, const Plane& pl) { return Scale(p, pl, -1); }
+Point& Reflect(Point& p, const Line& axis) { return Scale(p, axis, -1); }
 
 //------------------------------------Rotations-------------------------------
 MyDouble DegToRad(MyDouble deg) { return deg * constants::kPi / 180.0; }
 MyDouble RadToDeg(MyDouble rad) { return rad * 180.0 / constants::kPi; }
 
-void Rotate(Point& p, const Line& axis, const MyDouble& deg) {
+Point& Rotate(Point& p, const Line& axis, const MyDouble& deg) {
   MyDouble angle = DegToRad(deg);
   Point e3 = axis.Collinear();
   Point e1 = axis.Normal(p);
@@ -157,4 +160,5 @@ void Rotate(Point& p, const Line& axis, const MyDouble& deg) {
   Point proection = p - (e1 * normalLength);
 
   p = proection + newNormal;
+  return p;
 }

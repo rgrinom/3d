@@ -29,14 +29,14 @@ Point Intersection(const Polygon& poly, const Line& l);
 Point Intersection(const Line& l, const Polygon& poly);
 
 //------------------------------------Scales----------------------------------
-void Scale(Polygon& poly, const Point& center, const MyDouble& k);
-void Scale(Polygon& poly, const Plane& pl, const MyDouble& k);
-void Scale(Polygon& poly, const Line& axis, const MyDouble& k);
+Polygon& Scale(Polygon& poly, const Point& center, const MyDouble& k);
+Polygon& Scale(Polygon& poly, const Plane& pl, const MyDouble& k);
+Polygon& Scale(Polygon& poly, const Line& axis, const MyDouble& k);
 
 //-----------------------------------Reflections------------------------------
-void Reflect(Polygon& poly, const Point& center);
-void Reflect(Polygon& poly, const Plane& pl);
-void Reflect(Polygon& poly, const Line& axis);
+Polygon& Reflect(Polygon& poly, const Point& center);
+Polygon& Reflect(Polygon& poly, const Plane& pl);
+Polygon& Reflect(Polygon& poly, const Line& axis);
 
 //------------------------------------Rotations-------------------------------
-void Rotate(Polygon& poly, const Line& axis, const MyDouble& deg);
+Polygon& Rotate(Polygon& poly, const Line& axis, const MyDouble& deg);

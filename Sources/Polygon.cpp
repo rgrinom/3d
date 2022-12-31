@@ -79,31 +79,36 @@ Point Intersection(const Line& l, const Polygon& poly) {
 }
 
 //------------------------------------Scales----------------------------------
-void Scale(Polygon& poly, const Point& center, const MyDouble& k) {
+Polygon& Scale(Polygon& poly, const Point& center, const MyDouble& k) {
   for (size_t i = 0; i < poly.points.size(); ++i) {
     Scale(poly.points[i], center, k);
   }
+  return poly;
 }
 
-void Scale(Polygon& poly, const Plane& pl, const MyDouble& k) {
+Polygon& Scale(Polygon& poly, const Plane& pl, const MyDouble& k) {
   for (size_t i = 0; i < poly.points.size(); ++i) {
     Scale(poly.points[i], pl, k);
   }
+  return poly;
 }
-void Scale(Polygon& poly, const Line& axis, const MyDouble& k) {
+
+Polygon& Scale(Polygon& poly, const Line& axis, const MyDouble& k) {
   for (size_t i = 0; i < poly.points.size(); ++i) {
     Scale(poly.points[i], axis, k);
   }
+  return poly;
 }
 
 //-----------------------------------Reflections------------------------------
-void Reflect(Polygon& poly, const Point& center) { Scale(poly, center, -1); }
-void Reflect(Polygon& poly, const Plane& pl) { Scale(poly, pl, -1); }
-void Reflect(Polygon& poly, const Line& axis) { Scale(poly, axis, -1); }
+Polygon& Reflect(Polygon& poly, const Point& center) { return Scale(poly, center, -1); }
+Polygon& Reflect(Polygon& poly, const Plane& pl) { return Scale(poly, pl, -1); }
+Polygon& Reflect(Polygon& poly, const Line& axis) { return Scale(poly, axis, -1); }
 
 //------------------------------------Rotations-------------------------------
-void Rotate(Polygon& poly, const Line& axis, const MyDouble& deg) {
+Polygon& Rotate(Polygon& poly, const Line& axis, const MyDouble& deg) {
   for (size_t i = 0; i < poly.points.size(); ++i) {
     Rotate(poly.points[i], axis, deg);
   }
+  return poly;
 }
