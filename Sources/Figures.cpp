@@ -2,11 +2,12 @@
 
 //----------------------------------Shape-------------------------------------
 Shape::Shape(std::vector<Polygon> polygons,
-             MyDouble x, MyDouble y, MyDouble z,
              MyDouble x_size, MyDouble y_size, MyDouble z_size,
+             MyDouble x, MyDouble y, MyDouble z,
              MyDouble x_angle, MyDouble y_angle, MyDouble z_angle,
              MyDouble center_x, MyDouble center_y, MyDouble center_z)
     : polygons_(polygons) {
+
   Plane x_scale(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));
   Plane y_scale(Point(0, 0, 0), Point(1, 0, 0), Point(0, 0, 1));
   Plane z_scale(Point(0, 0, 0), Point(1, 0, 0), Point(0, 1, 0));
@@ -14,7 +15,9 @@ Shape::Shape(std::vector<Polygon> polygons,
   Scale(y_scale, y_size);
   Scale(z_scale, z_size);
 
+  Point pos(x, y, z);
   Point center(center_x, center_y, center_z);
+
   Line x_spin(center, center + Point(1, 0, 0));
   Line y_spin(center, center + Point(0, 1, 0));
   Line z_spin(center, center + Point(0, 0, 1));
@@ -22,7 +25,6 @@ Shape::Shape(std::vector<Polygon> polygons,
   Rotate(y_spin, y_angle);
   Rotate(z_spin, z_angle);
 
-  Point pos(x, y, z);
   *this += pos - center;
 }
 
@@ -85,8 +87,8 @@ Shape& Shape::Rotate(const Line& axis, const MyDouble& deg) {
 
 //--------------------------------Figures-------------------------------------
 
-Cube::Cube(MyDouble x, MyDouble y, MyDouble z,
-           MyDouble x_size, MyDouble y_size, MyDouble z_size,
+Cube::Cube(MyDouble x_size, MyDouble y_size, MyDouble z_size,
+           MyDouble x, MyDouble y, MyDouble z,
            MyDouble x_angle, MyDouble y_angle, MyDouble z_angle,
            MyDouble center_x, MyDouble center_y, MyDouble center_z)
       : Shape({Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 1, 0), Point(0, 1, 0)}),
@@ -95,5 +97,5 @@ Cube::Cube(MyDouble x, MyDouble y, MyDouble z,
                Polygon({Point(0, 0, 1), Point(1, 0, 1), Point(1, 1, 1), Point(0, 1, 1)}),
                Polygon({Point(0, 1, 0), Point(1, 1, 0), Point(1, 1, 1), Point(0, 1, 1)}),
                Polygon({Point(1, 0, 0), Point(1, 1, 0), Point(1, 1, 1), Point(1, 0, 1)})},
-              x, y, z, x_size, y_size, z_size, x_angle, y_angle, z_angle, center_x, center_y, center_z) {
+              x_size, y_size, z_size, x, y, z, x_angle, y_angle, z_angle, center_x, center_y, center_z) {
 }

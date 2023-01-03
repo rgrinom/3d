@@ -51,8 +51,8 @@ Point Line::Normal(const Point& p) const {
   Point pl1_normal = pl1.Normal();
   Plane pl2(p1, p2, p1 + pl1_normal);
   Point ret = pl2.Normal();
-  if ((pl2.Distance(p) >= 0 && pl2.Distance(ret) <= 0) ||
-      (pl2.Distance(p) <= 0 && pl2.Distance(ret) >= 0)) {
+  if ((pl2.Distance(p) >= 0 && pl2.Distance(p1 + ret) <= 0) ||
+      (pl2.Distance(p) <= 0 && pl2.Distance(p1 + ret) >= 0)) {
     ret *= -1;
   }
   return ret;

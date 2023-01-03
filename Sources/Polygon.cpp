@@ -114,3 +114,10 @@ Polygon& Polygon::Rotate(const Line& axis, const MyDouble& deg) {
   }
   return *this;
 }
+
+std::ostream& operator<<(std::ostream& out, const Polygon& poly) {
+  for (size_t i = 0; i < poly.points_.size(); ++i) {
+    out << poly.points_[i] << "\n";
+  }
+  return out;
+}
