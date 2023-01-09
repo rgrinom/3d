@@ -2,6 +2,7 @@
 
 Plane::Plane(const Point& p1, const Point& p2, const Point& p3) {
   std::vector<LE> system;
+  system.reserve(3);
   system.push_back(LE({p1.x, p1.y, p1.z, 1}, 0));
   system.push_back(LE({p2.x, p2.y, p2.z, 1}, 0));
   system.push_back(LE({p3.x, p3.y, p3.z, 1}, 0));

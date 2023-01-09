@@ -10,10 +10,7 @@ Line::Line(const Point& p1, const Point& p2) {
     p = Point(distr_(gen_), distr_(gen_), distr_(gen_));
   }
   pl1_ = Plane(p1, p2, p);
-  std::vector<MyDouble> parameters = pl1_.GetParameters();
-  while (pl1_.Contains(p)) {
-    p = Point(distr_(gen_), distr_(gen_), distr_(gen_));
-  }
+  p = p1 + DotProduct(p2 - p1, p - p1);
   pl2_ = Plane(p1, p2, p);
 }
 
