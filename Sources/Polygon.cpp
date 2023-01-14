@@ -16,11 +16,11 @@ bool Segment::Contains(const Point& p) const {
 }
 
 //------------------------------Polygon---------------------------------------
-Polygon::Polygon(const std::vector<Point>& points)
-    : points_(points), plane_(points_[0], points_[1], points_[2]) {}
+Polygon::Polygon(const std::vector<Point>& points): points_(points) {}
 
 bool Polygon::Contains(const Point& p) const {
-  if (!plane_.Contains(p)) {
+  Plane pl(points_[0], points_[1], points_[2]);
+  if (!pl.Contains(p)) {
     return false;
   }
   for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
@@ -32,40 +32,38 @@ bool Polygon::Contains(const Point& p) const {
     }
   }
 
-  // std::vector<MyDouble> pl_parameters = plane_.GetParameters();
-  // std::vector<LE> system;
-  // system.push_back(LE({pl_parameters[0], pl_parameters[1], pl_parameters[2]}, -pl_parameters[3]));
-  // SoLE sole(system);
-  // Line l;
-  // bool is_line_good = false;
-  // while (!is_line_good) {
-  //   Point p1(sole.RandomSolution());
-  //   l = Line(p, p1);
-  //   is_line_good = true;
-  //   for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
-  //     const Point& cur_point = points_[cur_point_ind];
-  //     if (l.Contains(cur_point)) {
-  //       is_line_good = false;
-  //       break;
-  //     }
-  //   }
-  // }
+  std::vector<MyDouble> pl_parameters = pl.GetParameters();
+  std::vector<LE> system;
+  system.push_back(LE({pl_parameters[0], pl_parameters[1], pl_parameters[2]}, -pl_parameters[3]));
+  SoLE sole(system);
+  Line l;
+  bool is_line_good = false;
+  while (!is_line_good) {
+    Point p1(sole.RandomSolution());
+    l = Line(p, p1);
+    is_line_good = true;
+    for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
+      const Point& cur_point = points_[cur_point_ind];
+      if (l.Contains(cur_point)) {
+        is_line_good = false;
+        break;
+      }
+    }
+  }
 
-  // size_t intersections_cnt = 0;
-  // for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
-  //   size_t next_point_ind = (cur_point_ind + 1) % points_.size();
-  //   const Point& cur_point = points_[cur_point_ind];
-  //   const Point& next_point = points_[next_point_ind];
-  //   Point intersection = l.Intersection(Line(cur_point, next_point));
-  //   if (Segment(cur_point, next_point).Contains(intersection) &&
-  //       intersection < p) {
-  //     ++intersections_cnt;
-  //   }
-  // }
+  size_t intersections_cnt = 0;
+  for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
+    size_t next_point_ind = (cur_point_ind + 1) % points_.size();
+    const Point& cur_point = points_[cur_point_ind];
+    const Point& next_point = points_[next_point_ind];
+    Point intersection = l.Intersection(Line(cur_point, next_point));
+    if (Segment(cur_point, next_point).Contains(intersection) &&
+        intersection < p) {
+      ++intersections_cnt;
+    }
+  }
   
-  // return intersections_cnt % 2 == 1;
-
-  return true;
+  return intersections_cnt % 2 == 1;
 }
 
 Point Polygon::operator[](size_t ind) const { return points_[ind]; }

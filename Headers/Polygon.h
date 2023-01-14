@@ -41,7 +41,6 @@ class Polygon {
 
  private:
   std::vector<Point> points_;
-  Plane plane_;
 
   friend std::ostream& operator<<(std::ostream& out, const Polygon& poly);
 };
