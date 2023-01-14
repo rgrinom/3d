@@ -79,7 +79,7 @@ std::mt19937 SoLE::gen_ = std::mt19937(rd_());
 std::uniform_int_distribution<> SoLE::distr_ = std::uniform_int_distribution<>(-10000, 10000);
 
 //-------------------------------Constructors--------------------------------
-SoLE::SoLE(std::vector<LE> system)
+SoLE::SoLE(const std::vector<LE>& system)
     : system_(system), based_cnt_(0), unknown_cnt_(system_[0].Size()),
       is_based_(system_[0].Size()) {
   Gauss();

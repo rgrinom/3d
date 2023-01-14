@@ -30,7 +30,7 @@ LE operator/(const LE& lhs, MyDouble rhs);
 
 class SoLE {
  public:
-  SoLE(std::vector<LE> system);
+  SoLE(const std::vector<LE>& system);
   std::vector<MyDouble> Solution();
   std::vector<MyDouble> RandomSolution();
   bool HasSolution();

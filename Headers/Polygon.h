@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 
 #include "Point.h"
 #include "Plane.h"
@@ -40,4 +41,8 @@ class Polygon {
 
  private:
   std::vector<Point> points_;
+
+  friend std::ostream& operator<<(std::ostream& out, const Polygon& poly);
 };
+
+std::ostream& operator<<(std::ostream& out, const Polygon& poly);
