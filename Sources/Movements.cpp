@@ -50,8 +50,7 @@ Point Line::Intersection(const Line& l) const {
 }
 
 Point Polygon::Intersection(const Line& l) const {
-  Plane pl(points_[0], points_[1], points_[2]);
-  Point intersection = pl.Intersection(l);
+  Point intersection = plane_.Intersection(l);
   return (Contains(intersection) ?
       intersection : Point(constants::kInf, constants::kInf, constants::kInf));
 }
