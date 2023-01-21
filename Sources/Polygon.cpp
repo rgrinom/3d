@@ -1,5 +1,9 @@
 #include "../Headers/Polygon.h"
 
+std::random_device Polygon::rd_;
+std::mt19937 Polygon::gen_ = std::mt19937(rd_());
+std::uniform_int_distribution<> Polygon::distr_ = std::uniform_int_distribution<>(-10000, 10000);
+
 //------------------------------Segment---------------------------------------
 Segment::Segment(const Point& p1, const Point& p2): p1_(p1), p2_(p2) {}
 
@@ -23,6 +27,7 @@ bool Polygon::Contains(const Point& p) const {
   if (!pl.Contains(p)) {
     return false;
   }
+
   for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
     size_t next_point_ind = (cur_point_ind + 1) % points_.size();
     const Point& cur_point = points_[cur_point_ind];
@@ -32,14 +37,11 @@ bool Polygon::Contains(const Point& p) const {
     }
   }
 
-  std::vector<MyDouble> pl_parameters = pl.GetParameters();
-  std::vector<LE> system;
-  system.push_back(LE({pl_parameters[0], pl_parameters[1], pl_parameters[2]}, -pl_parameters[3]));
-  SoLE sole(system);
   Line l;
   bool is_line_good = false;
   while (!is_line_good) {
-    Point p1(sole.RandomSolution());
+    MyDouble k1(distr_(gen_)), k2(distr_(gen_));
+    Point p1 = pl.p0 + pl.u * k1 + pl.v * k2;
     l = Line(p, p1);
     is_line_good = true;
     for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {

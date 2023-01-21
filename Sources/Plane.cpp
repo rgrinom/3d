@@ -1,28 +1,38 @@
 #include "../Headers/Plane.h"
 
-Plane::Plane(const Point& p1, const Point& p2, const Point& p3) {
-  std::vector<LE> system;
-  system.reserve(3);
-  system.push_back(LE({p1.x, p1.y, p1.z, 1}, 0));
-  system.push_back(LE({p2.x, p2.y, p2.z, 1}, 0));
-  system.push_back(LE({p3.x, p3.y, p3.z, 1}, 0));
-  SoLE sole(system);
-  std::vector<MyDouble> coefficients = sole.Solution();
-  a_ = coefficients[0];
-  b_ = coefficients[1];
-  c_ = coefficients[2];
-  d_ = coefficients[3];
+Plane::Plane(const Point& p1, const Point& p2, const Point& p3)
+    : p0(p1), u((p2 - p1).Normalize()), v((p3 - p1).Normalize()) {}
+
+Point Plane::Normal() const { return CrossProduct(u, v).Normalize(); }
+
+Point Plane::Normal(const Point& p) const {
+  Point ret = Normal();
+  if (DotProduct(ret, p - p0) < 0) {
+    ret *= -1;
+  }
+  return ret;
 }
 
 MyDouble Plane::Distance(const Point& p) const {
-  return a_ * p.x + b_ * p.y + c_ * p.z + d_;
+  return DotProduct(Normal(p), p - p0);
 }
 
-bool Plane::Contains(const Point& p) const { return  Distance(p) == 0; }
-
-Point Plane::Normal() const {
-  Point ret(a_, b_, c_);
-  return ret.Normalize();
+MyDouble Plane::SignedDistance(const Point& p) const {
+  return DotProduct(Normal(), p - p0);
 }
 
-std::vector<MyDouble> Plane::GetParameters() const { return {a_, b_, c_, d_}; }
+bool Plane::Contains(const Point& p) const { return Distance(p) == 0; }
+
+std::istream& operator>>(std::istream& in, Plane& pl) {
+  Point p1, p2, p3;
+  in >> p1 >> p2 >> p3;
+  pl.p0 = p1;
+  pl.u = p2 - p1;
+  pl.v = p3 - p1;
+  return in;
+}
+
+std::ostream& operator<<(std::ostream& out, const Plane& pl) {
+  out << pl.p0 << pl.u << pl.v;
+  return out;
+}

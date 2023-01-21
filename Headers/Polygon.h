@@ -43,6 +43,10 @@ class Polygon {
   std::vector<Point> points_;
 
   friend std::ostream& operator<<(std::ostream& out, const Polygon& poly);
+
+  static std::random_device rd_;
+  static std::mt19937 gen_;
+  static std::uniform_int_distribution<> distr_;
 };
 
 std::ostream& operator<<(std::ostream& out, const Polygon& poly);

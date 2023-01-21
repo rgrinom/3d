@@ -30,7 +30,9 @@ Point Point::operator-() const {
 }
 
 Point& Point::Normalize() {
-  *this /= (*this).Length();
+  if (Length() != 0) {
+    *this /= Length();
+  }
   return *this;
 }
 
@@ -94,7 +96,7 @@ std::istream& operator>>(std::istream& in, Point& p) {
 }
 
 std::ostream& operator<<(std::ostream& out, const Point& p) {
-  out << p.x << " " << p.y << " " << p.z;
+  out << p.x << " " << p.y << " " << p.z << "\n";
   return out;
 }
 
