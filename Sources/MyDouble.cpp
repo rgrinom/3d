@@ -29,7 +29,7 @@ bool operator>=(const MyDouble& lhs, const MyDouble& rhs) {
 }
 
 //-------------------------------Arithmetics---------------------------------
-MyDouble MyDouble::operator-() {
+MyDouble MyDouble::operator-() const {
   MyDouble ret = *this;
   ret *= -1;
   return ret;

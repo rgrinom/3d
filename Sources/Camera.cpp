@@ -44,7 +44,7 @@ void Camera::Draw(const std::vector<Shape>& objects) {
   Point width_e = (screen_[1] - screen_[0]) / width_;
   Point start_p = screen_[0];
   Plane screen_plane(screen_[0], screen_[1], screen_[2]);
-  MyDouble dist_to_viewer = screen_plane.Distance(viewer_);
+  MyDouble dist_to_viewer = screen_plane.SignedDistance(viewer_);
   for (MyDouble i = 0; i <= height_; i += 1) {
     for (MyDouble j = 0; j <= width_; j += 1) {
       Point pixel = start_p + (height_e * i) + (width_e * j);
@@ -54,7 +54,7 @@ void Camera::Draw(const std::vector<Shape>& objects) {
       for (size_t k = 0; k < objects.size(); ++k) {
         std::vector<Point> ret = objects[k].Intersection(l);
         for (size_t f = 0; f < ret.size(); ++f) {
-          MyDouble dist_to_cur = screen_plane.Distance(ret[f]);
+          MyDouble dist_to_cur = screen_plane.SignedDistance(ret[f]);
           if ((dist_to_viewer > 0 && dist_to_cur > 0) ||
               (dist_to_viewer < 0 && dist_to_cur < 0)) {
             continue;
@@ -68,7 +68,7 @@ void Camera::Draw(const std::vector<Shape>& objects) {
           }
         }
       }
-      if (intersection != Point(constants::kInf, constants::kInf, constants::kInf)) {
+      if (intersection != constants::kNotAPoint) {
         display_[i.value][j.value] = true;
       } else {
         display_[i.value][j.value] = false;
