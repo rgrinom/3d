@@ -8,58 +8,21 @@ std::uniform_int_distribution<> Polygon::distr_ = std::uniform_int_distribution<
 Polygon::Polygon(const std::vector<Point>& points): points_(points) {}
 
 bool Polygon::Contains(const Point& p) const {
-  Plane pl(points_[0], points_[1], points_[2]);
-  if (!pl.Contains(p)) {
-    return false;
-  }
-
+  size_t posistive_rotations = 0, negative_rotations = 0;
+  Point normal = Plane(points_[0], points_[1], points_[2]).Normal();
   for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
     size_t next_point_ind = (cur_point_ind + 1) % points_.size();
     const Point& cur_point = points_[cur_point_ind];
     const Point& next_point = points_[next_point_ind];
-    if (SegmentContains(cur_point, next_point, p)) {
-      return true;
+    Point cur_normal = CrossProduct(next_point - cur_point, p - cur_point);
+    MyDouble dot_product = DotProduct(normal, cur_normal);
+    if (dot_product > 0) {
+      ++posistive_rotations;
+    } else if (dot_product < 0) {
+      ++negative_rotations;
     }
   }
-
-  // return false;
-
-  Line l;
-  bool is_line_good = false;
-
-  MyDouble k1(distr_(gen_)), k2(distr_(gen_));
-  Point p1 = pl.p0 + pl.u * k1 + pl.v * k2;
-  l = Line(p, p1);
-
-  //Case happens quite rarely soooo......this check is not necessary
-  // while (!is_line_good) {
-  //   MyDouble k1(distr_(gen_)), k2(distr_(gen_));
-  //   Point p1 = pl.p0 + pl.u * k1 + pl.v * k2;
-  //   l = Line(p, p1);
-  //   is_line_good = true;
-  //   for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
-  //     const Point& cur_point = points_[cur_point_ind];
-  //     if (l.Contains(cur_point)) {
-  //       is_line_good = false;
-  //       // std::cout << "Bad line\n";
-  //       break;
-  //     }
-  //   }
-  // }
-
-  size_t intersections_cnt = 0;
-  for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
-    size_t next_point_ind = (cur_point_ind + 1) % points_.size();
-    const Point& cur_point = points_[cur_point_ind];
-    const Point& next_point = points_[next_point_ind];
-    Point intersection = l.Intersection(Line(cur_point, next_point));
-    if (SegmentContains(cur_point, next_point, intersection) &&
-        intersection < p) {
-      ++intersections_cnt;
-    }
-  }
-  
-  return intersections_cnt % 2 == 1;
+  return (posistive_rotations == 0 || negative_rotations == 0);
 }
 
 Point Polygon::operator[](size_t ind) const { return points_[ind]; }
