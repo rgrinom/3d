@@ -6,6 +6,7 @@
 //----------------------------------Intersections-----------------------------
 Line Plane::Intersection(const Plane& pl) const {
   std::vector<LE> system;
+  system.reserve(3);
   system.push_back(LE({u.x, v.x, -pl.u.x, -pl.v.x}, pl.p0.x - p0.x));
   system.push_back(LE({u.y, v.y, -pl.u.y, -pl.v.y}, pl.p0.y - p0.y));
   system.push_back(LE({u.z, v.z, -pl.u.z, -pl.v.z}, pl.p0.z - p0.z));
@@ -18,13 +19,14 @@ Line Plane::Intersection(const Plane& pl) const {
 
 Point Plane::Intersection(const Line& l) const {
   std::vector<LE> system;
+  system.reserve(3);
   system.push_back(LE({u.x, v.x, -l.a.x}, l.p0.x - p0.x));
   system.push_back(LE({u.y, v.y, -l.a.y}, l.p0.y - p0.y));
   system.push_back(LE({u.z, v.z, -l.a.z}, l.p0.z - p0.z));
   SoLE sole(system);
   std::vector<MyDouble> solution = sole.Solution();
   if (!sole.HasSolution()) {
-    return Point(constants::kInf, constants::kInf, constants::kInf);
+    return constants::kNotAPoint;
   }
   return l.p0 + l.a * solution[2];
 }
@@ -35,13 +37,14 @@ Point Line::Intersection(const Plane& pl) const {
 
 Point Line::Intersection(const Line& l) const {
   std::vector<LE> system;
+  system.reserve(3);
   system.push_back(LE({a.x, -l.a.x}, l.p0.x - p0.x));
   system.push_back(LE({a.y, -l.a.y}, l.p0.y - p0.y));
   system.push_back(LE({a.z, -l.a.z}, l.p0.z - p0.z));
   SoLE sole(system);
   std::vector<MyDouble> solution = sole.Solution();
   if (!sole.HasSolution()) {
-    return Point(constants::kInf, constants::kInf, constants::kInf);
+    return constants::kNotAPoint;
   }
   return l.p0 + l.a * solution[1];
 }
@@ -50,7 +53,7 @@ Point Polygon::Intersection(const Line& l) const {
   Plane pl(points_[0], points_[1], points_[2]);
   Point intersection = pl.Intersection(l);
   return (Contains(intersection) ?
-      intersection : Point(constants::kInf, constants::kInf, constants::kInf));
+      intersection : constants::kNotAPoint);
 }
 
 Point Line::Intersection(const Polygon& poly) const {

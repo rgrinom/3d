@@ -32,7 +32,7 @@ std::vector<Point> Shape::Intersection(const Line& l) const {
   std::vector<Point> ret;
   for (size_t i = 0; i < polygons_.size(); ++i) {
     Point cur_intersection = polygons_[i].Intersection(l);
-    if (cur_intersection != Point(constants::kInf, constants::kInf, constants::kInf)) {
+    if (cur_intersection != constants::kNotAPoint) {
       ret.push_back(cur_intersection);
     }
   }

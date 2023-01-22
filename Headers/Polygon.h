@@ -7,16 +7,6 @@
 #include "Plane.h"
 #include "Line.h"
 
-class Segment {
- public:
-  Segment(const Point& p1, const Point& p2);
-  Segment(const std::vector<Point>& points);
-  bool Contains(const Point& p) const;
-
- private:
-  Point p1_, p2_;
-};
-
 class Polygon {
  public:
   Polygon(const std::vector<Point>& points);
@@ -41,6 +31,8 @@ class Polygon {
 
  private:
   std::vector<Point> points_;
+
+  bool SegmentContains(const Point& p1, const Point& p2, const Point& p) const;
 
   friend std::ostream& operator<<(std::ostream& out, const Polygon& poly);
 

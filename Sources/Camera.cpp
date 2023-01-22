@@ -68,7 +68,7 @@ void Camera::Draw(const std::vector<Shape>& objects) {
           }
         }
       }
-      if (intersection != Point(constants::kInf, constants::kInf, constants::kInf)) {
+      if (intersection != constants::kNotAPoint) {
         display_[i.value][j.value] = true;
       } else {
         display_[i.value][j.value] = false;

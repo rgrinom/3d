@@ -58,3 +58,7 @@ std::ostream& operator<<(std::ostream& out, const Point& p);
 
 MyDouble DotProduct(const Point& lhs, const Point& rhs);
 Point CrossProduct(const Point& lhs, const Point& rhs);
+
+namespace constants {
+  const Point kNotAPoint(kInf, kInf, kInf);
+}
