@@ -1,31 +1,23 @@
 #include "../Headers/Figures.h"
 
 //----------------------------------Shape-------------------------------------
-Shape::Shape(std::vector<Polygon> polygons,
-             MyDouble x_size, MyDouble y_size, MyDouble z_size,
-             MyDouble x, MyDouble y, MyDouble z,
-             MyDouble x_angle, MyDouble y_angle, MyDouble z_angle,
-             MyDouble center_x, MyDouble center_y, MyDouble center_z)
-    : polygons_(polygons) {
-
+Shape::Shape(const std::vector<Polygon>& polygons,
+             const Point& size, const Point& position,
+             const Point& rotation, const Point& center)
+    : polygons_(polygons), center_(center),
+      forward_(1, 0, 0), left_(0, 1, 0), up_(0, 0, 1){
   Plane x_scale(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));
   Plane y_scale(Point(0, 0, 0), Point(1, 0, 0), Point(0, 0, 1));
   Plane z_scale(Point(0, 0, 0), Point(1, 0, 0), Point(0, 1, 0));
-  Scale(x_scale, x_size);
-  Scale(y_scale, y_size);
-  Scale(z_scale, z_size);
+  Scale(x_scale, size.x);
+  Scale(y_scale, size.y);
+  Scale(z_scale, size.z);
 
-  Point pos(x, y, z);
-  Point center(center_x, center_y, center_z);
+  *this += position - center;
 
-  Line x_spin(center, center + Point(1, 0, 0));
-  Line y_spin(center, center + Point(0, 1, 0));
-  Line z_spin(center, center + Point(0, 0, 1));
-  Rotate(x_spin, x_angle);
-  Rotate(y_spin, y_angle);
-  Rotate(z_spin, z_angle);
-
-  *this += pos - center;
+  Rotate(Point(1, 0, 0), rotation.x);
+  Rotate(Point(0, 1, 0), rotation.y);
+  Rotate(Point(0, 0, 1), rotation.z);
 }
 
 std::vector<Point> Shape::Intersection(const Line& l) const {
@@ -43,14 +35,24 @@ Shape& Shape::operator+=(const Point& p) {
   for (size_t i = 0; i < polygons_.size(); ++i) {
     polygons_[i] += p;
   }
+  center_ += p;
   return *this;
 }
 
 Shape& Shape::operator-=(const Point& p) {
-  for (size_t i = 0; i < polygons_.size(); ++i) {
-    polygons_[i] -= p;
-  }
-  return *this;
+  return (*this += -p);
+}
+
+Shape& Shape::MoveForward(const MyDouble& distance) {
+  return (*this += forward_ * distance);
+}
+
+Shape& Shape::MoveLeft(const MyDouble& distance) {
+  return (*this += left_ * distance);
+}
+
+Shape& Shape::MoveUp(const MyDouble& distance) {
+  return (*this += up_ * distance);
 }
 
 Shape& Shape::Scale(const Point& center, const MyDouble& k) {
@@ -82,20 +84,60 @@ Shape& Shape::Rotate(const Line& axis, const MyDouble& deg) {
   for (size_t i = 0; i < polygons_.size(); ++i) {
     polygons_[i].Rotate(axis, deg);
   }
+
+  forward_ += center_;
+  left_ += center_;
+  up_ += center_;
+
+  center_.Rotate(axis, deg);
+  forward_.Rotate(axis, deg);
+  left_.Rotate(axis, deg);
+  up_.Rotate(axis, deg);
+
+  forward_ -= center_;
+  left_ -= center_;
+  up_ -= center_;
+
   return *this;
+}
+
+Shape& Shape::Rotate(const Point& p, const MyDouble& deg) {
+  Line axis(center_, center_ + p);
+  return Rotate(axis, deg);
+}
+
+Shape& Shape::RotateAroundForwardAxis(const MyDouble& deg) {
+  return Rotate(forward_, deg);
+}
+
+Shape& Shape::RotateAroundLeftAxis(const MyDouble& deg) {
+  return Rotate(left_, deg);
+}
+
+Shape& Shape::RotateAroundUpAxis(const MyDouble& deg) {
+  return Rotate(up_, deg);
+}
+
+Line Shape::GetForwardAxis() {
+  return Line(center_, center_ + forward_);
+}
+
+Line Shape::GetLeftAxis() {
+  return Line(center_, center_ + left_);
+}
+
+Line Shape::GetUpAxis() {
+  return Line(center_, center_ + up_);
 }
 
 //--------------------------------Figures-------------------------------------
 
-Cube::Cube(MyDouble x_size, MyDouble y_size, MyDouble z_size,
-           MyDouble x, MyDouble y, MyDouble z,
-           MyDouble x_angle, MyDouble y_angle, MyDouble z_angle,
-           MyDouble center_x, MyDouble center_y, MyDouble center_z)
-      : Shape({Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 1, 0), Point(0, 1, 0)}),
-               Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 0, 1), Point(0, 0, 1)}),
-               Polygon({Point(0, 0, 0), Point(0, 1, 0), Point(0, 1, 1), Point(0, 0, 1)}),
-               Polygon({Point(0, 0, 1), Point(1, 0, 1), Point(1, 1, 1), Point(0, 1, 1)}),
-               Polygon({Point(0, 1, 0), Point(1, 1, 0), Point(1, 1, 1), Point(0, 1, 1)}),
-               Polygon({Point(1, 0, 0), Point(1, 1, 0), Point(1, 1, 1), Point(1, 0, 1)})},
-              x_size, y_size, z_size, x, y, z, x_angle, y_angle, z_angle, center_x, center_y, center_z) {
-}
+Cube::Cube(const Point& size, const Point& position,
+           const Point& rotation, const Point& center_position)
+    : Shape({Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 1, 0), Point(0, 1, 0)}),
+             Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 0, 1), Point(0, 0, 1)}),
+             Polygon({Point(0, 0, 0), Point(0, 1, 0), Point(0, 1, 1), Point(0, 0, 1)}),
+             Polygon({Point(0, 0, 1), Point(1, 0, 1), Point(1, 1, 1), Point(0, 1, 1)}),
+             Polygon({Point(0, 1, 0), Point(1, 1, 0), Point(1, 1, 1), Point(0, 1, 1)}),
+             Polygon({Point(1, 0, 0), Point(1, 1, 0), Point(1, 1, 1), Point(1, 0, 1)})},
+             size, position, rotation, center_position) {}
