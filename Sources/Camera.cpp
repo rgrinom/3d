@@ -1,42 +1,87 @@
 #include "../Headers/Camera.h"
 
-Camera::Camera(MyDouble width, MyDouble height, MyDouble depth,
-               MyDouble x, MyDouble y, MyDouble z,
-               MyDouble left_right_angle, MyDouble up_down_angle, MyDouble rotation_angle)
+Camera::Camera(const MyDouble& width, const MyDouble& height, const MyDouble& depth,
+               const Point& position, const Point& rotatrion)
     : width_(width), height_(height),
       screen_({Point(depth, width / 2, height / 2), Point(depth, -width / 2, height / 2),
                Point(depth, -width / 2, -height / 2), Point(depth, width / 2, -height / 2)}),
-      display_(height_.value + 1, std::vector<bool>(width_.value + 1)),
-      viewer_(0, 0, 0), left_right_axis_(0, 0, 1), up_down_axis_(0, 1, 0), rotation_axis_(1, 0, 0) {
-  Point pos(x, y, z);
-  viewer_ += pos;
-  screen_ += pos;
+      display_(static_cast<size_t>(height_.value) + 1, std::vector<bool>(static_cast<size_t>(width_.value) + 1)),
+      viewer_(0, 0, 0), forward_(1, 0, 0), left_(0, 1, 0), up_(0, 0, 1) {
+  *this += position;
   
-  RotateLeftRight(left_right_angle);
-  RotateUpDown(up_down_angle);
-  RotateRotate(rotation_angle);
+  RotateAroundForwardAxis(rotatrion.x);
+  RotateAroundLeftAxis(rotatrion.y);
+  RotateAroundUpAxis(rotatrion.z);
 }
 
-void Camera::Rotate(const Line& axis, const MyDouble& angle) {
-  screen_.Rotate(axis, angle);
-  left_right_axis_.Rotate(axis, angle);
-  up_down_axis_.Rotate(axis, angle);
-  rotation_axis_.Rotate(axis, angle);
+Camera& Camera::operator+=(const Point& p) {
+  viewer_ += p;
+  screen_ += p;
+  return *this;
 }
 
-void Camera::RotateLeftRight(const MyDouble& angle) {
-  Line left_right(viewer_, viewer_ + left_right_axis_);
-  Rotate(left_right, angle);
+Camera& Camera::operator-=(const Point& p) {
+  return (*this += -p);
 }
 
-void Camera::RotateUpDown(const MyDouble& angle) {
-  Line up_down(viewer_, viewer_ + up_down_axis_);
-  Rotate(up_down, angle);
+Camera& Camera::MoveForward(const MyDouble& distance) {
+  return (*this += forward_ * distance);
 }
 
-void Camera::RotateRotate(const MyDouble& angle) {
-  Line rotation(viewer_, viewer_ + rotation_axis_);
-  Rotate(rotation, angle);
+Camera& Camera::MoveLeft(const MyDouble& distance) {
+  return (*this += left_ * distance);
+}
+
+Camera& Camera::MoveUp(const MyDouble& distance) {
+  return (*this += up_ * distance);
+}
+
+Camera& Camera::Rotate(const Line& axis, const MyDouble& deg) {
+  screen_.Rotate(axis, deg);
+
+  forward_ += viewer_;
+  left_ += viewer_;
+  up_ += viewer_;
+
+  viewer_.Rotate(axis, deg);
+  forward_.Rotate(axis, deg);
+  left_.Rotate(axis, deg);
+  up_.Rotate(axis, deg);
+
+  forward_ -= viewer_;
+  left_ -= viewer_;
+  up_ -= viewer_;
+
+  return *this;
+}
+
+Camera& Camera::Rotate(const Point& p, const MyDouble& deg) {
+  Line axis(viewer_, viewer_ + p);
+  return Rotate(axis, deg);
+}
+
+Camera& Camera::RotateAroundForwardAxis(const MyDouble& deg) {
+  return Rotate(forward_, deg);
+}
+
+Camera& Camera::RotateAroundLeftAxis(const MyDouble& deg) {
+  return Rotate(left_, deg);
+}
+
+Camera& Camera::RotateAroundUpAxis(const MyDouble& deg) {
+  return Rotate(up_, deg);
+}
+
+Line Camera::GetForwardAxis() {
+  return Line(viewer_, viewer_ + forward_);
+}
+
+Line Camera::GetLeftAxis() {
+  return Line(viewer_, viewer_ + left_);
+}
+
+Line Camera::GetUpAxis() {
+  return Line(viewer_, viewer_ + up_);
 }
 
 void Camera::Draw(const std::vector<Shape>& objects) {
@@ -45,8 +90,8 @@ void Camera::Draw(const std::vector<Shape>& objects) {
   Point start_p = screen_[0];
   Plane screen_plane(screen_[0], screen_[1], screen_[2]);
   MyDouble dist_to_viewer = screen_plane.SignedDistance(viewer_);
-  for (MyDouble i = 0; i <= height_; i += 1) {
-    for (MyDouble j = 0; j <= width_; j += 1) {
+  for (size_t i = 0; i <= static_cast<size_t>(height_.value); ++i) {
+    for (size_t j = 0; j <= static_cast<size_t>(width_.value); ++j) {
       Point pixel = start_p + (height_e * i) + (width_e * j);
       Line l(viewer_, pixel);
       Point intersection(constants::kInf, constants::kInf, constants::kInf);
@@ -68,10 +113,11 @@ void Camera::Draw(const std::vector<Shape>& objects) {
           }
         }
       }
+
       if (intersection != constants::kNotAPoint) {
-        display_[i.value][j.value] = true;
+        display_[i][j] = true;
       } else {
-        display_[i.value][j.value] = false;
+        display_[i][j] = false;
       }
     }
   }
@@ -92,7 +138,7 @@ void Camera::Display(std::ostream& out) {
 
 void Camera::Display(sf::RenderWindow& window) {
   sf::Image image;
-  image.create(width_.value, height_.value, sf::Color(0, 0, 0));
+  image.create(display_.size(), display_[0].size(), sf::Color(0, 0, 0));
   for (size_t i = 0; i < display_.size(); ++i) {
     for (size_t j = 0; j < display_[i].size(); ++j) {
       if (display_[i][j]) {

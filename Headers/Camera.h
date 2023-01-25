@@ -9,13 +9,25 @@
 
 class Camera {
  public:
-  Camera(MyDouble width, MyDouble height, MyDouble depth,
-         MyDouble x = 0, MyDouble y = 0, MyDouble z = 0,
-         MyDouble left_right_angle = 0, MyDouble up_down_angle = 0, MyDouble rotation_angle = 0);
-  void Rotate(const Line& axis, const MyDouble& angle);
-  void RotateLeftRight(const MyDouble& angle);
-  void RotateUpDown(const MyDouble& angle);
-  void RotateRotate(const MyDouble& angle);
+  Camera(const MyDouble& width, const MyDouble& height, const MyDouble& depth,
+         const Point& position = Point(0, 0, 0),
+         const Point& rotation = Point(0, 0, 0));
+
+  Camera& operator+=(const Point& p);
+  Camera& operator-=(const Point& p);
+  Camera& MoveForward(const MyDouble& distance);
+  Camera& MoveLeft(const MyDouble& distance);
+  Camera& MoveUp(const MyDouble& distance);
+
+  Camera& Rotate(const Line& axis, const MyDouble& deg);
+  Camera& Rotate(const Point& p, const MyDouble& deg);
+  Camera& RotateAroundForwardAxis(const MyDouble& deg);
+  Camera& RotateAroundLeftAxis(const MyDouble& deg);
+  Camera& RotateAroundUpAxis(const MyDouble& deg);
+
+  Line GetForwardAxis();
+  Line GetLeftAxis();
+  Line GetUpAxis();
 
   void Draw(const std::vector<Shape>& objects);
   void Display(std::ostream& out);
@@ -27,6 +39,5 @@ class Camera {
   Polygon screen_;
   std::vector<std::vector<bool>> display_;
   Point viewer_;
-  Point left_right_axis_, up_down_axis_, rotation_axis_;
-
+  Point forward_, left_, up_;
 };

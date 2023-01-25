@@ -11,23 +11,27 @@
 #include "Headers/Polygon.h"
 #include "Headers/Figures.h"
 #include "Headers/Camera.h"
+#include "Headers/Player.h"
 
 void demo() {
   std::ifstream in("Data/scene.txt");
 
-  MyDouble cam_width, cam_height, cam_depth, cam_x, cam_y, cam_z, cam_rot1, cam_rot2, cam_rot3;
-  in >> cam_width >> cam_height >> cam_depth >> cam_x >> cam_y >> cam_z >> cam_rot1 >> cam_rot2 >> cam_rot3;
-  Camera cam(cam_width, cam_height, cam_depth, cam_x, cam_y, cam_z, cam_rot1, cam_rot2, cam_rot3);
+  MyDouble cam_width, cam_height, cam_depth, speed;
+  Point size, position, rotation, center;
+  in >> cam_width >> cam_height >> cam_depth >> size >> position >> rotation >> center >> speed;
+  Player player(cam_width, cam_height, cam_depth, size, position, rotation, center, speed);
 
   sf::RenderWindow window(sf::VideoMode(cam_width.value, cam_height.value), "Cube");
+  sf::Mouse::setPosition(sf::Vector2i((cam_width / 2).value, (cam_height / 2).value), window);
+  window.setMouseCursorVisible(false);
 
   std::vector<Shape> objects;
   size_t n;
   in >> n;
   for (size_t i = 0; i < n; ++i) {
-    MyDouble x_size, y_size, z_size, x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, center_x, center_y, center_z;
-    in >> x_size >> y_size >> z_size >> x_pos >> y_pos >> z_pos >> x_rot >> y_rot >> z_rot >> center_x >> center_y >> center_z;
-    objects.push_back(Cube(x_size, y_size, z_size, x_pos, y_pos, z_pos, x_rot, y_rot, z_rot, center_x, center_y, center_z));
+    Point size, position, rotation, center_position;
+    in >> size >> position >> rotation >> center_position;
+    objects.push_back(Cube(size, position, rotation, center_position));
   }
   in.close();
 
@@ -44,9 +48,9 @@ void demo() {
 
     window.clear();
 
-    cam.RotateLeftRight(10);
-    cam.Draw(objects);
-    cam.Display(window);
+    player.Move(window);
+    player.Draw(objects);
+    player.Display(window);
 
     window.display();
   }
