@@ -28,6 +28,32 @@ bool Polygon::Contains(const Point& p) const {
 Point Polygon::operator[](size_t ind) const { return points_[ind]; }
 Point& Polygon::operator[](size_t ind) {return points_[ind]; }
 
+MyDouble Polygon::DistanceTo(const Point& p) const {
+  Plane pl(points_[0], points_[1], points_[2]);
+  if (Contains(pl.Proection(p))) {
+    return pl.SignedDistance(p);
+  }
+  MyDouble min_distance = constants::kInf;
+  for (size_t cur_point_ind = 0; cur_point_ind < points_.size(); ++cur_point_ind) {
+    size_t next_point_ind = (cur_point_ind + 1) % points_.size();
+    const Point& cur_point = points_[cur_point_ind];
+    const Point& next_point = points_[next_point_ind];
+    Line l(cur_point, next_point);
+    MyDouble cur_distance;
+    if (SegmentContains(cur_point, next_point, l.Proection(p))) {
+      cur_distance = l.Distance(p);
+    } else {
+      MyDouble dist1 = cur_point.Distance(p);
+      MyDouble dist2 = next_point.Distance(p);
+      cur_distance = (dist1 < dist2 ? dist1 : dist2);
+    }
+    if (cur_distance < min_distance) {
+      min_distance = cur_distance;
+    }
+  }
+  return min_distance;
+}
+
 Polygon& Polygon::operator+=(const Point& p) {
   for (size_t i = 0; i < points_.size(); ++i) {
     points_[i] += p;

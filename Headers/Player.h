@@ -15,7 +15,8 @@ class Player {
          const Point& body_center, const MyDouble& speed);
 
   void Move(sf::RenderWindow& window);
-  void Draw(const std::vector<Shape>& objects);
+  void DrawRayCasting(const std::vector<Shape>& objects);
+  void DrawRayMarching(const std::vector<Shape>& objects);
   void Display(std::ostream& out);
   void Display(sf::RenderWindow& window);
 

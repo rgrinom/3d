@@ -13,6 +13,10 @@ MyDouble Line::Distance(const Point& p) const {
 
 bool Line::Contains(const Point& p) const { return Distance(p) == 0; }
 
+Point Line::Proection(const Point& p) const {
+  return p - Normal(p) * Distance(p);
+}
+
 std::istream& operator>>(std::istream& in, Line& l) {
   Point p1, p2;
   in >> p1 >> p2;

@@ -29,7 +29,8 @@ class Camera {
   Line GetLeftAxis();
   Line GetUpAxis();
 
-  void Draw(const std::vector<Shape>& objects);
+  void DrawRayCasting(const std::vector<Shape>& objects);
+  void DrawRayMarching(const std::vector<Shape>& objects);
   void Display(std::ostream& out);
   void Display(sf::RenderWindow& window);
 
@@ -40,4 +41,12 @@ class Camera {
   std::vector<std::vector<bool>> display_;
   Point viewer_;
   Point forward_, left_, up_;
+
+  std::vector<std::vector<std::pair<size_t, size_t>>> adds_;
+
+  static bool CastRay(std::pair<Line, std::vector<Shape>> pr);
+  static std::vector<bool> RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec);
 };
+
+// bool CastRay(std::pair<Line, std::vector<Shape>> pr);
+// std::vector<bool> RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec);

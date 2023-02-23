@@ -49,7 +49,7 @@ void demo() {
     window.clear();
 
     player.Move(window);
-    player.Draw(objects);
+    player.DrawRayCasting(objects);
     player.Display(window);
 
     window.display();

@@ -6,12 +6,19 @@ Camera::Camera(const MyDouble& width, const MyDouble& height, const MyDouble& de
       screen_({Point(depth, width / 2, height / 2), Point(depth, -width / 2, height / 2),
                Point(depth, -width / 2, -height / 2), Point(depth, width / 2, -height / 2)}),
       display_(static_cast<size_t>(height_.value) + 1, std::vector<bool>(static_cast<size_t>(width_.value) + 1)),
-      viewer_(0, 0, 0), forward_(1, 0, 0), left_(0, 1, 0), up_(0, 0, 1) {
+      viewer_(0, 0, 0), forward_(1, 0, 0), left_(0, 1, 0), up_(0, 0, 1),
+      adds_(static_cast<size_t>(height_.value) + 1, std::vector<std::pair<size_t, size_t>>(static_cast<size_t>(width_.value) + 1)) {
   *this += position;
   
   RotateAroundForwardAxis(rotatrion.x);
   RotateAroundLeftAxis(rotatrion.y);
   RotateAroundUpAxis(rotatrion.z);
+
+  for (size_t i = 0; i < display_.size(); ++i) {
+    for (size_t j = 0; j < display_[i].size(); ++j) {
+      adds_[i][j] = {i, j};
+    }
+  }
 }
 
 Camera& Camera::operator+=(const Point& p) {
@@ -84,7 +91,53 @@ Line Camera::GetUpAxis() {
   return Line(viewer_, viewer_ + up_);
 }
 
-void Camera::Draw(const std::vector<Shape>& objects) {
+bool Camera::CastRay(std::pair<Line, std::vector<Shape>> pr) {
+  Line& l = pr.first;
+  std::vector<Shape>& objects = pr.second;
+  Point intersection(constants::kInf, constants::kInf, constants::kInf);
+  MyDouble dist_to_intersection = constants::kInf;
+  for (Shape& object : objects) {
+    std::vector<Point> intersections = object.Intersection(l);
+    for (Point& cur_intersection : intersections) {
+      if(DotProduct(l.a, cur_intersection - l.p0) > 0) {
+        MyDouble dist_to_cur = l.p0.Distance(cur_intersection);
+        if (dist_to_cur < dist_to_intersection) {
+          dist_to_intersection = dist_to_cur;
+          intersection = cur_intersection;
+        }
+      }
+    }
+  }
+  return (intersection != constants::kNotAPoint);
+}
+
+std::vector<bool> Camera::RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec) {
+  std::vector<bool> ret(vec.size());
+  std::transform(vec.begin(), vec.end(), ret.begin(), CastRay);
+  return ret;
+}
+
+void Camera::DrawRayCasting(const std::vector<Shape>& objects) {
+
+  // std::vector<std::vector<std::pair<Line, std::vector<Shape>>>> vec2(display_.size(), std::vector<std::pair<Line, std::vector<Shape>>>(display_[0].size()));
+
+  // Point height_e = (screen_[2] - screen_[1]) / height_;
+  // Point width_e = (screen_[1] - screen_[0]) / width_;
+  // Point start_p = screen_[0];
+  // Plane screen_plane(screen_[0], screen_[1], screen_[2]);
+  // MyDouble dist_to_viewer = screen_plane.SignedDistance(viewer_);
+  // for (size_t i = 0; i <= static_cast<size_t>(height_.value); ++i) {
+  //   for (size_t j = 0; j <= static_cast<size_t>(width_.value); ++j) {
+  //     Point pixel = start_p + (height_e * i) + (width_e * j);
+  //     Line l(pixel, pixel + (pixel - viewer_));
+  //     vec2[i][j] = {l, objects};
+  //   }
+  // }
+
+  // std::transform(vec2.begin(), vec2.end(), display_.begin(), RayCastParallelFoo);
+
+
+
   Point height_e = (screen_[2] - screen_[1]) / height_;
   Point width_e = (screen_[1] - screen_[0]) / width_;
   Point start_p = screen_[0];
@@ -113,12 +166,41 @@ void Camera::Draw(const std::vector<Shape>& objects) {
           }
         }
       }
+      
+      display_[i][j] = (intersection != constants::kNotAPoint);
+    }
+  }
+}
 
-      if (intersection != constants::kNotAPoint) {
-        display_[i][j] = true;
-      } else {
-        display_[i][j] = false;
+void Camera::DrawRayMarching(const std::vector<Shape>& objects) {
+  Point height_e = (screen_[2] - screen_[1]) / height_;
+  Point width_e = (screen_[1] - screen_[0]) / width_;
+  Point start_p = screen_[0];
+  for (size_t i = 0; i <= static_cast<size_t>(height_.value); ++i) {
+    for (size_t j = 0; j <= static_cast<size_t>(width_.value); ++j) {
+      Point pixel = start_p + (height_e * i) + (width_e * j);
+      Line l(viewer_, pixel);
+      Point marcher = viewer_;
+      MyDouble step;
+      for (size_t iter = 0; iter < 3; ++iter) {
+        step = constants::kInf;
+        for (auto& cur_obj : objects) {
+          MyDouble cur_distance = cur_obj.DistanceTo(marcher);
+          if (cur_distance < 0) {
+            step = 0;
+            break;
+          }
+          if (cur_distance < step) {
+            step = cur_distance;
+          }
+        }
+        if (step == 0) {
+          break;
+        }
+        marcher += l.a * step;
       }
+
+      display_[i][j] = (step < 0.01);
     }
   }
 }

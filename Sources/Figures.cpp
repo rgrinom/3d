@@ -20,6 +20,18 @@ Shape::Shape(const std::vector<Polygon>& polygons,
   Rotate(Point(0, 0, 1), rotation.z);
 }
 
+Line Shape::GetForwardAxis() const {
+  return Line(center_, center_ + forward_);
+}
+
+Line Shape::GetLeftAxis() const {
+  return Line(center_, center_ + left_);
+}
+
+Line Shape::GetUpAxis() const {
+  return Line(center_, center_ + up_);
+}
+
 std::vector<Point> Shape::Intersection(const Line& l) const {
   std::vector<Point> ret;
   for (size_t i = 0; i < polygons_.size(); ++i) {
@@ -29,6 +41,27 @@ std::vector<Point> Shape::Intersection(const Line& l) const {
     }
   }
   return ret;
+}
+
+MyDouble Shape::DistanceTo(const Point& p) const {
+  bool inside = true;
+  MyDouble min_distance = constants::kInf;
+  for (size_t cur_polygon = 0; cur_polygon < polygons_.size(); ++cur_polygon) {
+    MyDouble cur_distance = polygons_[cur_polygon].DistanceTo(p);
+    if (cur_distance > 0) {
+      inside = false;
+    } else {
+      cur_distance *= -1;
+    }
+
+    if (cur_distance < min_distance) {
+      min_distance = cur_distance;
+    }
+  }
+  if (inside) {
+    min_distance *= -1;
+  }
+  return min_distance;
 }
 
 Shape& Shape::operator+=(const Point& p) {
@@ -118,26 +151,14 @@ Shape& Shape::RotateAroundUpAxis(const MyDouble& deg) {
   return Rotate(up_, deg);
 }
 
-Line Shape::GetForwardAxis() {
-  return Line(center_, center_ + forward_);
-}
-
-Line Shape::GetLeftAxis() {
-  return Line(center_, center_ + left_);
-}
-
-Line Shape::GetUpAxis() {
-  return Line(center_, center_ + up_);
-}
-
 //--------------------------------Figures-------------------------------------
 
 Cube::Cube(const Point& size, const Point& position,
            const Point& rotation, const Point& center_position)
-    : Shape({Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 1, 0), Point(0, 1, 0)}),
+    : Shape({Polygon({Point(0, 0, 0), Point(0, 1, 0), Point(1, 1, 0), Point(1, 0, 0)}),
              Polygon({Point(0, 0, 0), Point(1, 0, 0), Point(1, 0, 1), Point(0, 0, 1)}),
-             Polygon({Point(0, 0, 0), Point(0, 1, 0), Point(0, 1, 1), Point(0, 0, 1)}),
+             Polygon({Point(0, 0, 0), Point(0, 0, 1), Point(0, 1, 1), Point(0, 1, 0)}),
              Polygon({Point(0, 0, 1), Point(1, 0, 1), Point(1, 1, 1), Point(0, 1, 1)}),
-             Polygon({Point(0, 1, 0), Point(1, 1, 0), Point(1, 1, 1), Point(0, 1, 1)}),
+             Polygon({Point(0, 1, 0), Point(0, 1, 1), Point(1, 1, 1), Point(1, 1, 0)}),
              Polygon({Point(1, 0, 0), Point(1, 1, 0), Point(1, 1, 1), Point(1, 0, 1)})},
              size, position, rotation, center_position) {}

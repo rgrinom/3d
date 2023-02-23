@@ -23,6 +23,10 @@ MyDouble Plane::SignedDistance(const Point& p) const {
 
 bool Plane::Contains(const Point& p) const { return Distance(p) == 0; }
 
+Point Plane::Proection(const Point& p) const {
+  return p - Normal(p) * Distance(p);
+}
+
 std::istream& operator>>(std::istream& in, Plane& pl) {
   Point p1, p2, p3;
   in >> p1 >> p2 >> p3;

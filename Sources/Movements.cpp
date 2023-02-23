@@ -18,17 +18,16 @@ Line Plane::Intersection(const Plane& pl) const {
 }
 
 Point Plane::Intersection(const Line& l) const {
-  std::vector<LE> system;
-  system.reserve(3);
-  system.push_back(LE({u.x, v.x, -l.a.x}, l.p0.x - p0.x));
-  system.push_back(LE({u.y, v.y, -l.a.y}, l.p0.y - p0.y));
-  system.push_back(LE({u.z, v.z, -l.a.z}, l.p0.z - p0.z));
-  SoLE sole(system);
-  std::vector<MyDouble> solution = sole.Solution();
-  if (!sole.HasSolution()) {
+  MyDouble k = Distance(l.p0);
+  if (k == 0) {
+    return l.p0;
+  }
+  Point normal = -Normal(l.p0);
+  MyDouble cos_alpha = DotProduct(normal, l.a);
+  if (cos_alpha == 0) {
     return constants::kNotAPoint;
   }
-  return l.p0 + l.a * solution[2];
+  return l.p0 + l.a * (k / cos_alpha);
 }
 
 Point Line::Intersection(const Plane& pl) const {
@@ -36,17 +35,20 @@ Point Line::Intersection(const Plane& pl) const {
 }
 
 Point Line::Intersection(const Line& l) const {
-  std::vector<LE> system;
-  system.reserve(3);
-  system.push_back(LE({a.x, -l.a.x}, l.p0.x - p0.x));
-  system.push_back(LE({a.y, -l.a.y}, l.p0.y - p0.y));
-  system.push_back(LE({a.z, -l.a.z}, l.p0.z - p0.z));
-  SoLE sole(system);
-  std::vector<MyDouble> solution = sole.Solution();
-  if (!sole.HasSolution()) {
+  MyDouble k = Distance(l.p0);
+  if (k == 0) {
+    return l.p0;
+  }
+  if (DotProduct(CrossProduct(a, l.a), l.p0 - p0) != 0) {
     return constants::kNotAPoint;
   }
-  return l.p0 + l.a * solution[1];
+
+  Point normal = -Normal(l.p0);
+  MyDouble cos_alpha = DotProduct(normal, l.a);
+  if (cos_alpha == 0) {
+    return constants::kNotAPoint;
+  }
+  return l.p0 + l.a * (k / cos_alpha);
 }
 
 Point Polygon::Intersection(const Line& l) const {
