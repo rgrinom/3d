@@ -1,4 +1,4 @@
-#include "../Headers/Plane.h"
+#include "Plane.h"
 
 Plane::Plane(const Point& p1, const Point& p2, const Point& p3)
     : p0(p1), u((p2 - p1).Normalize()), v((p3 - p1).Normalize()) {}

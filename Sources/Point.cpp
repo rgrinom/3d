@@ -1,4 +1,4 @@
-#include "../Headers/Point.h"
+#include "Point.h"
 
 //------------------------------Constructors----------------------------------
 Point::Point(MyDouble x, MyDouble y, MyDouble z): x(x), y(y), z(z) {}

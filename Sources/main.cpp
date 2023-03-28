@@ -3,18 +3,19 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Headers/MyDouble.h"
-#include "Headers/SoLE.h"
-#include "Headers/Point.h"
-#include "Headers/Plane.h"
-#include "Headers/Line.h"
-#include "Headers/Polygon.h"
-#include "Headers/Figures.h"
-#include "Headers/Camera.h"
-#include "Headers/Player.h"
+#include "MyDouble.h"
+#include "SoLE.h"
+#include "Point.h"
+#include "Plane.h"
+#include "Line.h"
+#include "Polygon.h"
+#include "Figures.h"
+#include "Camera.h"
+#include "Player.h"
 
 void demo() {
-  std::ifstream in("Data/scene.txt");
+  std::ifstream in;
+  in.open("../Data/scene.txt");
 
   MyDouble cam_width, cam_height, cam_depth, speed;
   Point size, position, rotation, center;

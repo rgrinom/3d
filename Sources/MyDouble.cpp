@@ -1,4 +1,4 @@
-#include "../Headers/MyDouble.h"
+#include "MyDouble.h"
 
 //-------------------------------Constructors--------------------------------
 MyDouble::MyDouble(double value): value(value) {}

@@ -1,4 +1,4 @@
-#include "../Headers/Figures.h"
+#include "Figures.h"
 
 //----------------------------------Shape-------------------------------------
 Shape::Shape(const std::vector<Polygon>& polygons,

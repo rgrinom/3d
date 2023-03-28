@@ -1,4 +1,4 @@
-#include "../Headers/Line.h"
+#include "Line.h"
 
 Line::Line(const Point& p1, const Point& p2): p0(p1), a((p2 - p1).Normalize()) {}
 

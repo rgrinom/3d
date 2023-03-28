@@ -1,4 +1,4 @@
-#include "../Headers/Camera.h"
+#include "Camera.h"
 
 Camera::Camera(const MyDouble& width, const MyDouble& height, const MyDouble& depth,
                const Point& position, const Point& rotatrion)

@@ -1,4 +1,4 @@
-#include "../Headers/Player.h"
+#include "Player.h"
 
 Player::Player(const MyDouble& camera_width, const MyDouble& camera_height,
                const MyDouble& camera_depth, const Point& size,

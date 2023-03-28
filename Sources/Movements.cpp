@@ -1,7 +1,7 @@
-#include "../Headers/Point.h"
-#include "../Headers/Plane.h"
-#include "../Headers/Line.h"
-#include "../Headers/Polygon.h"
+#include "Point.h"
+#include "Plane.h"
+#include "Line.h"
+#include "Polygon.h"
 
 //----------------------------------Intersections-----------------------------
 Line Plane::Intersection(const Plane& pl) const {

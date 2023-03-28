@@ -1,4 +1,4 @@
-#include "../Headers/Polygon.h"
+#include "Polygon.h"
 
 std::random_device Polygon::rd_;
 std::mt19937 Polygon::gen_ = std::mt19937(rd_());
