@@ -17,6 +17,7 @@ class Line {
   Point Normal(const Point& p) const;
   MyDouble Distance(const Point& p) const;
   bool Contains(const Point& p) const;
+  Point Proection(const Point& p) const;
 
   Point Intersection(const Plane& pl) const;
   Point Intersection(const Line& l) const;

@@ -14,7 +14,13 @@ class Shape {
         const Point& position = Point(0, 0, 0),
         const Point& rotation = Point(0, 0, 0),
         const Point& center = Point(0, 0, 0));
+
+  Line GetForwardAxis() const;
+  Line GetLeftAxis() const;
+  Line GetUpAxis() const;
+
   std::vector<Point> Intersection(const Line& l) const;
+  MyDouble DistanceTo(const Point& p) const;
 
   Shape& operator+=(const Point& p);
   Shape& operator-=(const Point& p);
@@ -35,10 +41,6 @@ class Shape {
   Shape& RotateAroundForwardAxis(const MyDouble& deg);
   Shape& RotateAroundLeftAxis(const MyDouble& deg);
   Shape& RotateAroundUpAxis(const MyDouble& deg);
-
-  Line GetForwardAxis();
-  Line GetLeftAxis();
-  Line GetUpAxis();
 
  private:
   std::vector<Polygon> polygons_;

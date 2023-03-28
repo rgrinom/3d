@@ -1,4 +1,4 @@
-#include "../Headers/Line.h"
+#include "Line.h"
 
 Line::Line(const Point& p1, const Point& p2): p0(p1), a((p2 - p1).Normalize()) {}
 
@@ -12,6 +12,10 @@ MyDouble Line::Distance(const Point& p) const {
 }
 
 bool Line::Contains(const Point& p) const { return Distance(p) == 0; }
+
+Point Line::Proection(const Point& p) const {
+  return p - Normal(p) * Distance(p);
+}
 
 std::istream& operator>>(std::istream& in, Line& l) {
   Point p1, p2;

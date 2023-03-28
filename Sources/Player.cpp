@@ -1,4 +1,4 @@
-#include "../Headers/Player.h"
+#include "Player.h"
 
 Player::Player(const MyDouble& camera_width, const MyDouble& camera_height,
                const MyDouble& camera_depth, const Point& size,
@@ -58,8 +58,12 @@ void Player::Move(sf::RenderWindow& window) {
   }
 }
 
-void Player::Draw(const std::vector<Shape>& objects) {
-  camera_.Draw(objects);
+void Player::DrawRayCasting(const std::vector<Shape>& objects) {
+  camera_.DrawRayCasting(objects);
+}
+
+void Player::DrawRayMarching(const std::vector<Shape>& objects) {
+  camera_.DrawRayMarching(objects);
 }
 
 void Player::Display(std::ostream& out) {

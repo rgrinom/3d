@@ -15,6 +15,7 @@ class Polygon {
   Point& operator[](size_t ind);
 
   Point Intersection(const Line& l) const;
+  MyDouble DistanceTo(const Point& p) const;
 
   Polygon& operator+=(const Point& p);
   Polygon& operator-=(const Point& p);

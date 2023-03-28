@@ -1,4 +1,4 @@
-#include "../Headers/Plane.h"
+#include "Plane.h"
 
 Plane::Plane(const Point& p1, const Point& p2, const Point& p3)
     : p0(p1), u((p2 - p1).Normalize()), v((p3 - p1).Normalize()) {}
@@ -22,6 +22,10 @@ MyDouble Plane::SignedDistance(const Point& p) const {
 }
 
 bool Plane::Contains(const Point& p) const { return Distance(p) == 0; }
+
+Point Plane::Proection(const Point& p) const {
+  return p - Normal(p) * Distance(p);
+}
 
 std::istream& operator>>(std::istream& in, Plane& pl) {
   Point p1, p2, p3;
