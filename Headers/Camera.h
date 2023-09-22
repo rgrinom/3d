@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
+
 #include <SFML/Graphics.hpp>
 
 #include "Polygon.h"
@@ -43,10 +45,4 @@ class Camera {
   Point forward_, left_, up_;
 
   std::vector<std::vector<std::pair<size_t, size_t>>> adds_;
-
-  static bool CastRay(std::pair<Line, std::vector<Shape>> pr);
-  static std::vector<bool> RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec);
 };
-
-// bool CastRay(std::pair<Line, std::vector<Shape>> pr);
-// std::vector<bool> RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec);

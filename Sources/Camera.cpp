@@ -91,35 +91,9 @@ Line Camera::GetUpAxis() {
   return Line(viewer_, viewer_ + up_);
 }
 
-bool Camera::CastRay(std::pair<Line, std::vector<Shape>> pr) {
-  Line& l = pr.first;
-  std::vector<Shape>& objects = pr.second;
-  Point intersection(constants::kInf, constants::kInf, constants::kInf);
-  MyDouble dist_to_intersection = constants::kInf;
-  for (Shape& object : objects) {
-    std::vector<Point> intersections = object.Intersection(l);
-    for (Point& cur_intersection : intersections) {
-      if(DotProduct(l.a, cur_intersection - l.p0) > 0) {
-        MyDouble dist_to_cur = l.p0.Distance(cur_intersection);
-        if (dist_to_cur < dist_to_intersection) {
-          dist_to_intersection = dist_to_cur;
-          intersection = cur_intersection;
-        }
-      }
-    }
-  }
-  return (intersection != constants::kNotAPoint);
-}
-
-std::vector<bool> Camera::RayCastParallelFoo(std::vector<std::pair<Line, std::vector<Shape>>> vec) {
-  std::vector<bool> ret(vec.size());
-  std::transform(vec.begin(), vec.end(), ret.begin(), CastRay);
-  return ret;
-}
-
 void Camera::DrawRayCasting(const std::vector<Shape>& objects) {
 
-  // std::vector<std::vector<std::pair<Line, std::vector<Shape>>>> vec2(display_.size(), std::vector<std::pair<Line, std::vector<Shape>>>(display_[0].size()));
+  // std::vector<std::vector<std::thread>> threads(display_.size());
 
   // Point height_e = (screen_[2] - screen_[1]) / height_;
   // Point width_e = (screen_[1] - screen_[0]) / width_;
@@ -127,15 +101,43 @@ void Camera::DrawRayCasting(const std::vector<Shape>& objects) {
   // Plane screen_plane(screen_[0], screen_[1], screen_[2]);
   // MyDouble dist_to_viewer = screen_plane.SignedDistance(viewer_);
   // for (size_t i = 0; i <= static_cast<size_t>(height_.value); ++i) {
+  //   threads[i].reserve(static_cast<size_t>(width_.value) + 1);
   //   for (size_t j = 0; j <= static_cast<size_t>(width_.value); ++j) {
-  //     Point pixel = start_p + (height_e * i) + (width_e * j);
-  //     Line l(pixel, pixel + (pixel - viewer_));
-  //     vec2[i][j] = {l, objects};
+  //     std::thread thr([this, &height_e, &width_e, &start_p, &screen_plane, &dist_to_viewer, &objects](size_t thread_i, size_t thread_j){
+  //       Point pixel = start_p + (height_e * thread_i) + (width_e * thread_j);
+  //       Line l(viewer_, pixel);
+  //       Point intersection(constants::kInf, constants::kInf, constants::kInf);
+  //       MyDouble dist_to_intersection = constants::kInf;
+  //       for (size_t k = 0; k < objects.size(); ++k) {
+  //         std::vector<Point> ret = objects[k].Intersection(l);
+  //         for (size_t f = 0; f < ret.size(); ++f) {
+  //           MyDouble dist_to_cur = screen_plane.SignedDistance(ret[f]);
+  //           if ((dist_to_viewer > 0 && dist_to_cur > 0) ||
+  //               (dist_to_viewer < 0 && dist_to_cur < 0)) {
+  //             continue;
+  //           }
+  //           if (dist_to_cur < 0) {
+  //             dist_to_cur *= -1;
+  //           }
+  //           if (dist_to_cur < dist_to_intersection) {
+  //             dist_to_intersection = dist_to_cur;
+  //             intersection = ret[f];
+  //           }
+  //         }
+  //       }
+        
+  //       display_[thread_i][thread_j] = (intersection != constants::kNotAPoint);
+  //     }, i, j);
+
+  //     threads[i].push_back(std::move(thr));
   //   }
   // }
 
-  // std::transform(vec2.begin(), vec2.end(), display_.begin(), RayCastParallelFoo);
-
+  // for (size_t i = 0; i <= static_cast<size_t>(height_.value); ++i) {
+  //   for (size_t j = 0; j <= static_cast<size_t>(width_.value); ++j) {
+  //     threads[i][j].join();
+  //   }
+  // }
 
 
   Point height_e = (screen_[2] - screen_[1]) / height_;
